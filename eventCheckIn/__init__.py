@@ -6,7 +6,7 @@ from .routes import *
 
 def create_app():
     app = Flask(__name__, instance_relative_config=True, template_folder="ui/templates", static_folder="ui/static")
-    app.config.from_pyfile("config.py")
+    app.config.from_pyfile("../config.py")
 
     # init extensions
     csrf.init_app(app)
