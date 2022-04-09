@@ -6,3 +6,5 @@ __pycache__/*
 *.swp
 ~#
 env
+.env
+.sqlite3

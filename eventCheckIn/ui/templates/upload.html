@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+{% if not success %}
+<form method="POST" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+    {{ form.csvData }}
+    <input type="submit" value="Submit" >
+</form>
+{% endif %}
+
+{% endblock %}
