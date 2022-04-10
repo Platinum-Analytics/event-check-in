@@ -23,7 +23,7 @@ class Attendee(db.Model):
 class Student(Attendee):
     __tablename__ = "student"
 
-    school_id = db.Column(db.VARCHAR(8), nullable=False)
+    school_id = db.Column(db.VARCHAR(8), nullable=False, unique=True)
     has_guest = db.Column(db.BOOLEAN, nullable=False)
 
     guests = db.relationship("Guest", backref="host")
@@ -38,7 +38,7 @@ class Student(Attendee):
 class Guest(Attendee):
     __tablename__ = "guest"
 
-    host_id = db.Column(db.VARCHAR(8), db.ForeignKey("student.ticket_num"), nullable=False)
+    host_id = db.Column(db.VARCHAR(8), db.ForeignKey("student.school_id"), nullable=False)
 
     def __init__(self, ticket_num: int, host_id: int, first_name: str, last_name: str, is_cash: bool,
                  check_num: int):

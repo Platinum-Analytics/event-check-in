@@ -35,7 +35,7 @@ def upload():
     guests = []
     for user in parsedData:
         if user[7] == "Y":
-            guest_ids[user[8]] = user[0]  # [guest_id : host_id]
+            guest_ids[user[8]] = user[1]  # [guest_id : host_school_id]
 
     for user in parsedData:
         user_id = user[0]
@@ -49,9 +49,9 @@ def upload():
 
             db.session.add(student)
 
-    for user, host_id in guests:
+    for user, host_school_id in guests:
         is_cash, check_num = checkCash(user[6])
-        guest = Guest(checkInt(user[0]), host_id, checkString(user[4]), checkString(user[2]), is_cash, check_num)
+        guest = Guest(checkInt(user[0]), host_school_id, checkString(user[4]), checkString(user[2]), is_cash, check_num)
 
         db.session.add(guest)
 
