@@ -1,5 +1,5 @@
 from flask import Flask
-from .extensions import csrf, db, login_manager
+from .extensions import csrf, db  # , login_manager
 
 from .routes import *
 
