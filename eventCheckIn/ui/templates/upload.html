@@ -1,11 +1,19 @@
 {% extends "base.html" %}
 {% block content %}
-{% if not success %}
-<form method="POST" enctype="multipart/form-data">
-    {{ form.hidden_tag() }}
-    {{ form.csvData }}
-    <input type="submit" value="Submit" >
-</form>
-{% endif %}
+    {% if not success %}
+
+        <h1>Upload a CSV!</h1>
+        <form method="POST" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            {{ form.csvData }}
+
+            <input type="submit" value="Submit">
+        </form>
+
+    {% else %}
+
+        <h1>CSV Successfully Updated!</h1>
+
+    {% endif %}
 
 {% endblock %}
