@@ -38,9 +38,9 @@ class Student(Attendee):
 class Guest(Attendee):
     __tablename__ = "guest"
 
-    host_ticket_num = db.Column(db.VARCHAR(8), db.ForeignKey("student.ticket_num"), nullable=False)
+    host_id = db.Column(db.VARCHAR(8), db.ForeignKey("student.ticket_num"), nullable=False)
 
-    def __init__(self, ticket_num: int, host_ticket_num: int, first_name: str, last_name: str, is_cash: bool,
+    def __init__(self, ticket_num: int, host_id: int, first_name: str, last_name: str, is_cash: bool,
                  check_num: int):
         super().__init__(ticket_num, first_name, last_name, is_cash, check_num)
-        self.host_ticket_num = host_ticket_num
+        self.host_id = host_id
