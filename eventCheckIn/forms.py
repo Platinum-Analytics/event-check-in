@@ -16,4 +16,4 @@ class UserLogin(FlaskForm):
 class UserRegister(FlaskForm):
     username = StringField("Username", validators=[InputRequired(), Length(min=5, max=15)])
     password = PasswordField("Password", validators=[InputRequired(), Length(min=8, max=80)])
-    currentPassword = PasswordField("Current User Password", validators=[InputRequired()])
+    currentPassword = PasswordField("Current User_ Password", validators=[InputRequired()])

@@ -4,7 +4,7 @@ from sqlalchemy.exc import IntegrityError
 
 from .extensions import db, bc
 from .forms import CSVUpload, UserLogin, UserRegister
-from .models import Student, Guest, User
+from .models import Student, Guest, User_
 from .scripts import checkString, checkInt, checkBool, checkCash
 
 
@@ -17,7 +17,7 @@ def login():
     if not form.validate_on_submit():
         return render_template("login.html", form=form, success=False)
 
-    user = User.query.filter_by(username=form.username.data).first()
+    user = User_.query.filter_by(username=form.username.data).first()
 
     if user and bc.check_password_hash(user.password, form.password.data):
         login_user(user)
@@ -41,7 +41,7 @@ def register():
     if not bc.check_password_hash(current_user.password, form.currentPassword.data):
         return render_template("register.html", form=form)
 
-    newUser = User(form.username.data, form.password.data)
+    newUser = User_(form.username.data, form.password.data)
 
     try:
         db.session.add(newUser)

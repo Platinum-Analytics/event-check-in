@@ -1,4 +1,4 @@
-from .models import User
+from .models import User_
 from .extensions import lm
 
 
@@ -39,4 +39,4 @@ def checkCash(value: str) -> tuple | None:
 
 @lm.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return User_.query.get(int(user_id))
