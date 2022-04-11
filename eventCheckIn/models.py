@@ -52,11 +52,11 @@ class Guest(Attendee):  # Non-PHS Student
 
 # Logins database model
 
-class User_(UserMixin, db.Model):
+class User_(UserMixin, db.Model):  # NOT User due to Postgresql contraints
     id = db.Column(db.INTEGER, primary_key=True)  # NOT "_id" due to UserMixin getId() constraints
     username = db.Column(db.VARCHAR(255), unique=True)
     password = db.Column(db.VARCHAR(255))
 
     def __init__(self, username, password):
         self.username = username
-        self.password = bc.generate_password_hash(password)
+        self.password = bc.generate_password_hash(password).decode("utf8")
