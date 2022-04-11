@@ -1,6 +1,6 @@
 from flask import Flask
-from .extensions import csrf, db  # , login_manager
 
+from .extensions import csrf, db, lm, bc
 from .routes import *
 
 
@@ -11,7 +11,11 @@ def create_app():
     # Initialize extensions
     csrf.init_app(app)
     db.init_app(app)
-    # login_manager.init_app(app)
+    lm.init_app(app)
+    bc.init_app(app)
+
+    lm.login_view = 'main.login'
+    lm.login_message = "Not Logged In!"
 
     app.register_blueprint(main)
 

@@ -1,16 +1,20 @@
-from .extensions import db
+from flask_login import UserMixin
+
+from .extensions import db, bc
 
 
-# Abstract parent class
-class Attendee(db.Model):
+# Attendee database models
+
+class Attendee(db.Model):  # Abstract parent class
+
     __abstract__ = True
 
     _id = db.Column(db.INTEGER, primary_key=True)
-    ticket_num = db.Column(db.VARCHAR(8), nullable=False)
+    ticket_num = db.Column(db.INTEGER, nullable=False)
     first_name = db.Column(db.VARCHAR(255))
     last_name = db.Column(db.VARCHAR(255))
     is_cash = db.Column(db.BOOLEAN, nullable=False)
-    check_num = db.Column(db.VARCHAR(4))
+    check_num = db.Column(db.INTEGER)
 
     def __init__(self, ticket_num: int, first_name: str, last_name: str, is_cash: bool, check_num: int):
         self.ticket_num = ticket_num
@@ -20,10 +24,10 @@ class Attendee(db.Model):
         self.check_num = check_num
 
 
-class Student(Attendee):
+class Student(Attendee):  # PHS Student
     __tablename__ = "student"
 
-    school_id = db.Column(db.VARCHAR(8), nullable=False, unique=True)
+    school_id = db.Column(db.INTEGER, nullable=False, unique=True)
     has_guest = db.Column(db.BOOLEAN, nullable=False)
 
     guests = db.relationship("Guest", backref="host")
@@ -35,12 +39,24 @@ class Student(Attendee):
         self.has_guest = has_guest
 
 
-class Guest(Attendee):
+class Guest(Attendee):  # Non-PHS Student
     __tablename__ = "guest"
 
-    host_id = db.Column(db.VARCHAR(8), db.ForeignKey("student.school_id"), nullable=False)
+    host_id = db.Column(db.INTEGER, db.ForeignKey("student.school_id"), nullable=False)
 
     def __init__(self, ticket_num: int, host_id: int, first_name: str, last_name: str, is_cash: bool,
                  check_num: int):
         super().__init__(ticket_num, first_name, last_name, is_cash, check_num)
         self.host_id = host_id
+
+
+# Logins database model
+
+class User(UserMixin, db.Model):
+    id = db.Column(db.INTEGER, primary_key=True)  # NOT "_id" due to UserMixin getId() constraints
+    username = db.Column(db.VARCHAR(255), unique=True)
+    password = db.Column(db.VARCHAR(255))
+
+    def __init__(self, username, password):
+        self.username = username
+        self.password = bc.generate_password_hash(password)

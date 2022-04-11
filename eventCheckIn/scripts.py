@@ -1,3 +1,7 @@
+from .models import User
+from .extensions import lm
+
+
 def checkInt(value: str) -> int | None:
     try:
         return int(value)
@@ -31,3 +35,8 @@ def checkCash(value: str) -> tuple | None:
             check_num = None
 
     return is_cash, check_num
+
+
+@lm.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))

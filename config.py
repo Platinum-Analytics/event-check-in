@@ -3,6 +3,7 @@ import os
 
 class Config(object):
     SECRET_KEY = os.environ.get("SECRET_KEY")  # same key will be used for csrf protection
+    USE_SESSION_FOR_NEXT = True
 
     # database
     SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")  # sqlite

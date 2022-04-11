@@ -1,8 +1,10 @@
-from flask import render_template, redirect, url_for
+from flask import render_template, redirect, url_for, session
+from flask_login import login_user, logout_user, login_required, current_user
+from sqlalchemy.exc import IntegrityError
 
-from .extensions import db
-from .forms import CSVUpload
-from .models import Student, Guest
+from .extensions import db, bc
+from .forms import CSVUpload, UserLogin, UserRegister
+from .models import Student, Guest, User
 from .scripts import checkString, checkInt, checkBool, checkCash
 
 
@@ -11,9 +13,54 @@ def index():
 
 
 def login():
-    return "<h1>My Login Page</h1>"
+    form = UserLogin()
+    if not form.validate_on_submit():
+        return render_template("login.html", form=form, success=False)
+
+    user = User.query.filter_by(username=form.username.data).first()
+
+    if user and bc.check_password_hash(user.password, form.password.data):
+        login_user(user)
+
+        if "next" in session:
+            nextVal = session["next"]
+
+            return redirect(nextVal)
+    else:
+        return render_template("login.html", form=form, success=False)
+
+    return render_template("login.html", form=form, success=True)
 
 
+@login_required
+def register():
+    form = UserRegister()
+    if not form.validate_on_submit():
+        return render_template("register.html", form=form)
+
+    if not bc.check_password_hash(current_user.password, form.currentPassword.data):
+        return render_template("register.html", form=form)
+
+    newUser = User(form.username.data, form.password.data)
+
+    try:
+        db.session.add(newUser)
+    except IntegrityError:
+        db.session.rollback()
+        return render_template("register.html", form=form)
+
+    db.session.commit()
+
+    return redirect(url_for("main.login"))
+
+
+@login_required
+def logout():
+    logout_user()
+    return "<h1>You have been logged out<h1>"
+
+
+@login_required
 def upload():
     form = CSVUpload()
     if not form.validate_on_submit():
@@ -56,4 +103,4 @@ def upload():
         db.session.add(guest)
 
     db.session.commit()
-    return render_template("upload.html", success=True)
+    return render_template("upload.html", form=form, success=True)
