@@ -2,7 +2,6 @@ from flask import Flask
 
 from .extensions import csrf, db, lm, bc
 from .routes import *
-from .models import User
 
 
 def create_app():
@@ -23,6 +22,4 @@ def create_app():
     with app.app_context():
         db.create_all()
 
-    db.session.add(User("Archit", "zombiesIsFun"))
-    db.session.commit()
     return app
