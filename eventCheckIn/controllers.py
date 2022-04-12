@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, session
+from flask import render_template, redirect, url_for, session, flash
 from flask_login import login_user, logout_user, login_required, current_user
 from sqlalchemy.exc import IntegrityError
 
@@ -19,15 +19,19 @@ def login():
 
     user = User_.query.filter_by(username=form.username.data).first()
 
-    if user and bc.check_password_hash(user.password, form.password.data):
-        login_user(user)
-
-        if "next" in session:
-            nextVal = session["next"]
-
-            return redirect(nextVal)
-    else:
+    if not user:
+        flash("User does not exist!", "info")
         return render_template("login.html", form=form, success=False)
+    elif not bc.check_password_hash(user.password, form.password.data):
+        flash("Incorrect Password!", "error")
+        return render_template("login.html", form=form, success=False)
+
+    login_user(user)
+
+    if "next" in session:
+        nextVal = session["next"]
+        if nextVal != "/logout":
+            return redirect(nextVal)
 
     return render_template("login.html", form=form, success=True)
 
@@ -39,25 +43,28 @@ def register():
         return render_template("register.html", form=form)
 
     if not bc.check_password_hash(current_user.password, form.currentPassword.data):
+        flash("Incorrect password!", "error")
         return render_template("register.html", form=form)
 
     newUser = User_(form.username.data, form.password.data)
 
     try:
         db.session.add(newUser)
+        db.session.commit()
     except IntegrityError:
         db.session.rollback()
+        flash("That username already exists!", "info")
         return render_template("register.html", form=form)
 
-    db.session.commit()
-
+    flash("Successfully Registered!", "success")
     return redirect(url_for("main.login"))
 
 
 @login_required
 def logout():
     logout_user()
-    return "<h1>You have been logged out<h1>"
+    flash("Successfully logged out!", "success")
+    return redirect(url_for("main.login"))
 
 
 @login_required
@@ -72,12 +79,12 @@ def upload():
     parsedData = [i.strip('\r').split(',') for i in rawData]
     del parsedData[0]
 
-    # Clear the database
-    for table in reversed(db.metadata.sorted_tables):
-        db.session.execute(table.delete())
+    # Clear the Student and Guest tables
+    db.session.execute(Guest.__table__.delete())
+    db.session.execute(Student.__table__.delete())
     db.session.commit()
 
-    # Store Students and Guests in database
+    # Store the attendees in the database
     guest_ids = {}
     guests = []
     for user in parsedData:
@@ -104,3 +111,9 @@ def upload():
 
     db.session.commit()
     return render_template("upload.html", form=form, success=True)
+
+
+def attendees():
+    students = Student.query.all()
+    guests = Guest.query.all()
+    return render_template("attendees.html", students=students, guests=guests)

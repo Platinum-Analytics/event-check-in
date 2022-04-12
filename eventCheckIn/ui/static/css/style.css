@@ -1,0 +1,48 @@
+body, h1, h2, h3, h4, h5, h6 {
+    font-family: "Raleway", sans-serif
+}
+
+/* The alert message box */
+.alert {
+    font-size: 2vh;
+    padding: 1vw;
+    color: white;
+    margin-bottom: 1vh;
+    opacity: .7;
+    transition: opacity .6s;
+    transition-timing-function: ease;
+    border-radius: 20px;
+}
+
+.error {
+    background-color: #f44336; /* Red */
+}
+
+.warn {
+    background-color: #ff9800; /* Yellow */
+}
+
+.info {
+    background-color: #2196F3; /* Blue */
+}
+
+.success {
+    background-color: #04AA6D;
+}
+
+/* The close button */
+.closeBtn {
+    margin-left: 1vw;
+    color: white;
+    font-weight: bold;
+    float: right;
+    font-size: 7vh;
+    line-height: 2vh;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* When moving the mouse over the close button */
+.closeBtn:hover {
+    color: black;
+}

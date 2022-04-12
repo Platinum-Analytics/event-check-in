@@ -15,7 +15,8 @@ def create_app():
     bc.init_app(app)
 
     lm.login_view = 'main.login'
-    lm.login_message = "Not Logged In!"
+    lm.login_message = "Please Log In!"
+    lm.login_message_category = "info"
 
     app.register_blueprint(main)
 
