@@ -113,7 +113,6 @@ def upload():
     return render_template("upload.html", form=form, success=True)
 
 
-@login_required
 def attendees():
     students = Student.query.all()
     guests = Guest.query.all()
