@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+    <table>
+        <tr>
+            <th>Ticket ID</th>
+            <th>School ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Show Guests</th>
+        </tr>
+        {% for i in students %}
+
+            <tr>
+                <td>{{ i.ticket_num }}</td>
+                <td>{{ i.school_id }}</td>
+                <td>{{ i.first_name }}</td>
+                <td>{{ i.last_name }}</td>
+                {% if i.guests %}
+                    <td>
+                        <button title="Show/Hide Guests" class="w3-button expand-guest" id="{{ i.school_id }}"><i class="fa fa-bars"></i></button>
+                    </td>
+                {% endif %}
+            </tr>
+
+            {% if i.guests %}
+                <tr class="guestRow" id="parent{{ i.school_id }}">
+                    {% for j in i.guests %}
+                        <td>{{ j.ticket_num }}</td>
+                        <td>""</td>
+                        <td>{{ j.first_name }}</td>
+                        <td>{{ j.last_name }}</td>
+                    {% endfor %}
+                </tr>
+            {% endif %}
+
+
+        {% endfor %}
+
+    </table>
+{% endblock %}
