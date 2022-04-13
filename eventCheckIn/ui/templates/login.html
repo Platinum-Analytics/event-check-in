@@ -1,22 +1,38 @@
 {% extends "base.html" %}
 {% block content %}
     {% if not success %}
+        <div class="flex">
+            <h1>Login!</h1>
+        </div>
+        <div class="flex">
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                <div class="group">
+                    <div class="element">
+                        {{ form.username.label }}
+                    </div>
+                    <div class="element">
+                        {{ form.username }}
+                    </div>
+                </div>
+                <div class="group">
+                    <div class="element">
+                        {{ form.password.label }}
+                    </div>
+                    <div class="element">
+                        {{ form.password }}
+                    </div>
+                </div>
+                <div class="group">
+                    <input type="submit" value="Go">
+                </div>
+            </form>
 
-        <h1>Login!</h1>
-        <form method="POST">
-            {{ form.hidden_tag() }}
-            {{ form.username.label }}
-            {{ form.username }}
-            {{ form.password.label }}
-            {{ form.password }}
-
-            <input type="submit" value="Go">
-        </form>
+        </div>
 
     {% else %}
 
         <h1>Login In Successful!</h1>
 
     {% endif %}
-
 {% endblock %}

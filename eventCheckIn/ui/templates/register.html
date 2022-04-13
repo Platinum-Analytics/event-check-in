@@ -1,17 +1,41 @@
 {% extends "base.html" %}
 {% block content %}
 
-    <h1>Register</h1>
-    <form method="POST">
-        {{ form.hidden_tag() }}
-        {{ form.username.label }}
-        {{ form.username }}
-        {{ form.password.label }}
-        {{ form.password }}
-        {{ form.currentPassword.label }}
-        {{ form.currentPassword }}
+    <div class="flex">
+        <h1>Register</h1>
+    </div>
+    <div class="flex">
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            <div class="group">
+                <div class="element">
+                    {{ form.username.label }}
+                </div>
+                <div class="element">
+                    {{ form.username }}
+                </div>
+            </div>
+            <div class="group">
+                <div class="element">
+                    {{ form.password.label }}
+                </div>
+                <div class="element">
+                    {{ form.password }}
+                </div>
+            </div>
+            <div class="group">
+                <div class="element">
+                    {{ form.currentPassword.label }}
+                </div>
+                <div class="element">
+                    {{ form.currentPassword }}
+                </div>
+            </div>
+            <div class="group">
+                <input type="submit" value="Register">
+            </div>
+        </form>
+    </div>
 
-        <input type="submit" value="Register">
-    </form>
 
 {% endblock %}

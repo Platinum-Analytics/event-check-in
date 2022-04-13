@@ -15,6 +15,8 @@ def index():
 def login():
     form = UserLogin()
     if not form.validate_on_submit():
+        if len(form.errors) != 0:
+            flash("Invalid Username/Password", "warn")
         return render_template("login.html", form=form, success=False)
 
     user = User_.query.filter_by(username=form.username.data).first()
@@ -40,6 +42,8 @@ def login():
 def register():
     form = UserRegister()
     if not form.validate_on_submit():
+        if len(form.errors) != 0:
+            flash("Invalid Username/Password", "warn")
         return render_template("register.html", form=form)
 
     if not bc.check_password_hash(current_user.password, form.currentPassword.data):
@@ -71,7 +75,9 @@ def logout():
 def upload():
     form = CSVUpload()
     if not form.validate_on_submit():
-        return render_template("upload.html", form=form, success=False)
+        if len(form.errors) != 0:
+            flash("Invalid File Type", "error")
+        return render_template("upload.html", form=form)
 
     # Read and parse CSV Data
     rawData = form.csvData.data.read().decode().split('\n')
@@ -110,7 +116,8 @@ def upload():
         db.session.add(guest)
 
     db.session.commit()
-    return render_template("upload.html", form=form, success=True)
+    flash("File Successfully Uploaded!", "success")
+    return render_template("upload.html", form=form)
 
 
 @login_required

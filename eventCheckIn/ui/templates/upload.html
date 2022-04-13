@@ -1,19 +1,24 @@
 {% extends "base.html" %}
 {% block content %}
-    {% if not success %}
-
+    <div class="flex">
         <h1>Upload a CSV!</h1>
+    </div>
+    <div class="flex">
         <form method="POST" enctype="multipart/form-data">
             {{ form.hidden_tag() }}
-            {{ form.csvData }}
-
-            <input type="submit" value="Submit">
+            <div class="group">
+                {{ form.csvData(style="display:none;", id="csv") }}
+                <div class="element">
+                    <label for="csv" class="w3-button w3-gray">Choose File</label>
+                </div>
+                <div class="element">
+                    <label id="csvLbl"></label>
+                </div>
+            </div>
+            <div class="group">
+                <input type="submit" value="Submit">
+            </div>
         </form>
-
-    {% else %}
-
-        <h1>CSV Successfully Updated!</h1>
-
-    {% endif %}
+    </div>
 
 {% endblock %}

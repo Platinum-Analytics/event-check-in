@@ -1,40 +1,61 @@
 {% extends "base.html" %}
 {% block content %}
     <table>
-        <tr>
-            <th>Ticket ID</th>
+        <thead class="tblGroup">
+        <tr class>
+            <th>Ticket #</th>
             <th>School ID</th>
             <th>First Name</th>
             <th>Last Name</th>
-            <th>Show Guests</th>
+            <th></th>
         </tr>
+        </thead>
+
         {% for i in students %}
 
+            <tbody class="tblGroup">
             <tr>
                 <td>{{ i.ticket_num }}</td>
                 <td>{{ i.school_id }}</td>
                 <td>{{ i.first_name }}</td>
                 <td>{{ i.last_name }}</td>
+
                 {% if i.guests %}
-                    <td>
-                        <button title="Show/Hide Guests" class="w3-button expand-guest" id="{{ i.school_id }}"><i class="fa fa-bars"></i></button>
+
+                    <td class="showGuest">
+                        <button title="Hide Guests" class="w3-button expand-guest" parent_id={{ i.school_id }}>
+                            <i class="fa fa-chevron-up"></i>
+                        </button>
                     </td>
+
+                {% else %}
+
+                    <td></td>
+
                 {% endif %}
+
             </tr>
 
             {% if i.guests %}
-                <tr class="guestRow" id="parent{{ i.school_id }}">
-                    {% for j in i.guests %}
+
+                {% for j in i.guests %}
+
+                    <tr class="guestRow" parent_id={{ i.school_id }}>
                         <td>{{ j.ticket_num }}</td>
-                        <td>""</td>
+                        <td></td>
                         <td>{{ j.first_name }}</td>
                         <td>{{ j.last_name }}</td>
-                    {% endfor %}
-                </tr>
+                        <td></td>
+                    </tr>
+
+                {% endfor %}
+
             {% endif %}
 
+            </tbody>
 
         {% endfor %}
 
     </table>
+
 {% endblock %}

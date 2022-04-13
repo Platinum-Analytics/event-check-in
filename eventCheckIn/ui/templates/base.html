@@ -11,16 +11,23 @@
 </head>
 <body>
 
-{% with messages = get_flashed_messages(with_categories=true) %}
-    {% for category, message in messages %}
-        <div class="alert {{ category }}">
-            {{ message }}
-            <span class="closeBtn" onclick="">&times;</span>
-        </div>
-    {% endfor %}
-{% endwith %}
 
-{% block content %}{% endblock %}
+<div class="flex main">
+    <div class="alertHolder">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="alert {{ category }}">
+                    <span class="closeBtnR">&times;</span>
+                    {{ message }}
+                    <span class="closeBtn">&times;</span>
+                </div>
+            {% endfor %}
+        {% endwith %}
+    </div>
+    <div class="flex">
+        {% block content %}{% endblock %}
+    </div>
+</div>
 
 <script src={{ url_for("static", filename="js/script.js") }}></script>
 
