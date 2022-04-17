@@ -17,25 +17,26 @@ def login():
     if not form.validate_on_submit():
         if len(form.errors) != 0:
             flash("Invalid Username/Password", "warn")
-        return render_template("login.html", form=form, success=False)
+        return render_template("login.html", form=form)
 
     user = User_.query.filter_by(username=form.username.data).first()
 
     if not user:
         flash("User does not exist!", "info")
-        return render_template("login.html", form=form, success=False)
+        return render_template("login.html", form=form)
     elif not bc.check_password_hash(user.password, form.password.data):
         flash("Incorrect Password!", "error")
-        return render_template("login.html", form=form, success=False)
+        return render_template("login.html", form=form)
 
     login_user(user)
+    flash("Logged In Successfully!", "success")
 
     if "next" in session:
         nextVal = session["next"]
         if nextVal != "/logout":
             return redirect(nextVal)
 
-    return render_template("login.html", form=form, success=True)
+    return render_template("login.html", form=form)
 
 
 @login_required
@@ -83,6 +84,11 @@ def upload():
     rawData = form.csvData.data.read().decode().split('\n')
 
     parsedData = [i.strip('\r').split(',') for i in rawData]
+    if parsedData[0] != ["Ticket", "ID", "LAST", "MI", "FIRST", "GR", "Payment Method", "Guest YN", "Guest Ticket "
+                                                                                                    "Number"]:
+        flash("Invalid CSV", "error")
+        return render_template("upload.html", form=form)
+
     del parsedData[0]
 
     # Clear the Student and Guest tables

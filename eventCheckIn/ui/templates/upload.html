@@ -1,24 +1,31 @@
 {% extends "base.html" %}
 {% block content %}
-    <div class="flex">
-        <h1>Upload a CSV!</h1>
-    </div>
-    <div class="flex">
-        <form method="POST" enctype="multipart/form-data">
-            {{ form.hidden_tag() }}
-            <div class="group">
-                {{ form.csvData(style="display:none;", id="csv") }}
-                <div class="element">
-                    <label for="csv" class="w3-button w3-gray">Choose File</label>
-                </div>
-                <div class="element">
-                    <label id="csvLbl"></label>
-                </div>
+    <div class="flex main">
+        <div class="flex sub">
+            <div class="flex sub-name">
+                <h1>Upload a CSV!</h1>
             </div>
-            <div class="group">
-                <input type="submit" value="Submit">
+            <div class="flex sub-content">
+                <form method="POST" enctype="multipart/form-data">
+                    {{ form.hidden_tag() }}
+                    <div class="group">
+                        {{ form.csvData(style="display:none;", id="csv") }}
+                        <div class="element">
+                            <label for="csv" class="w3-button w3-gray">Choose File</label>
+                        </div>
+                        <div class="element">
+                            <label id="csvLbl"></label>
+                        </div>
+                    </div>
+                    <div class="group">
+                        <div class="element">
+                            <input class="w3-button w3-green" type="submit" value="Upload">
+                        </div>
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
     </div>
 
 {% endblock %}
+

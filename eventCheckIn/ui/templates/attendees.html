@@ -1,61 +1,84 @@
 {% extends "base.html" %}
 {% block content %}
-    <table>
-        <thead class="tblGroup">
-        <tr class>
-            <th>Ticket #</th>
-            <th>School ID</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th></th>
-        </tr>
-        </thead>
+    <div class="flex tableMain">
+        <div class="flex holder">
+            <div class="flex-section">
+                <button class="w3-button w3-light-gray">
+                    Home
+                </button>
+            </div>
 
-        {% for i in students %}
+            <div class="flex-section">
+                <h1>All Attendees</h1>
+            </div>
 
-            <tbody class="tblGroup">
-            <tr>
-                <td>{{ i.ticket_num }}</td>
-                <td>{{ i.school_id }}</td>
-                <td>{{ i.first_name }}</td>
-                <td>{{ i.last_name }}</td>
+            <div class="flex-section">
+                <button class="w3-button w3-gray" id="all-guests">
+                    Collapse All
+                </button>
+            </div>
 
-                {% if i.guests %}
+        </div>
+        <div class="flex tblHolder">
+            <table>
+                <thead class="tblGroup">
+                <tr class>
+                    <th>Ticket #</th>
+                    <th>School ID</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th></th>
+                </tr>
+                </thead>
 
-                    <td class="showGuest">
-                        <button title="Hide Guests" class="w3-button expand-guest" parent_id={{ i.school_id }}>
-                            <i class="fa fa-chevron-up"></i>
-                        </button>
-                    </td>
+                {% for i in students %}
 
-                {% else %}
+                    <tbody class="tblGroup">
+                    <tr>
+                        <td>{{ i.ticket_num }}</td>
+                        <td>{{ i.school_id }}</td>
+                        <td>{{ i.first_name }}</td>
+                        <td>{{ i.last_name }}</td>
 
-                    <td></td>
+                        {% if i.guests %}
 
-                {% endif %}
+                            <td class="showGuest">
+                                <button title="Hide Guests" class="w3-button expand-guest" parent_id={{ i.school_id }}>
+                                    <i class="fa fa-chevron-up"></i>
+                                </button>
+                            </td>
 
-            </tr>
+                        {% else %}
 
-            {% if i.guests %}
+                            <td></td>
 
-                {% for j in i.guests %}
 
-                    <tr class="guestRow" parent_id={{ i.school_id }}>
-                        <td>{{ j.ticket_num }}</td>
-                        <td></td>
-                        <td>{{ j.first_name }}</td>
-                        <td>{{ j.last_name }}</td>
-                        <td></td>
+                        {% endif %}
+
                     </tr>
+
+                    {% if i.guests %}
+
+                        {% for j in i.guests %}
+
+                            <tr class="guestRow" parent_id={{ i.school_id }}>
+                                <td>{{ j.ticket_num }}</td>
+                                <td></td>
+                                <td>{{ j.first_name }}</td>
+                                <td>{{ j.last_name }}</td>
+                                <td></td>
+                            </tr>
+
+                        {% endfor %}
+
+                    {% endif %}
+
+                    </tbody>
 
                 {% endfor %}
 
-            {% endif %}
-
-            </tbody>
-
-        {% endfor %}
-
-    </table>
+            </table>
+        </div>
+    </div>
 
 {% endblock %}
