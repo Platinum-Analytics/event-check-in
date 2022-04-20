@@ -17,16 +17,16 @@ def login():
     if not form.validate_on_submit():
         if len(form.errors) != 0:
             flash("Invalid Username/Password", "warn")
-        return render_template("login.html", form=form)
+        return render_template("login2.html", form=form)
 
     user = User_.query.filter_by(username=form.username.data).first()
 
     if not user:
         flash("User does not exist!", "info")
-        return render_template("login.html", form=form)
+        return render_template("login2.html", form=form)
     elif not bc.check_password_hash(user.password, form.password.data):
-        flash("Incorrect Password!", "error")
-        return render_template("login.html", form=form)
+        flash("Incorrect Password!", "danger")
+        return render_template("login2.html", form=form)
 
     login_user(user)
     flash("Logged In Successfully!", "success")
@@ -36,7 +36,12 @@ def login():
         if nextVal != "/logout":
             return redirect(nextVal)
 
-    return render_template("login.html", form=form)
+    return render_template("home.html")
+
+
+@login_required
+def home():
+    return render_template("home.html")
 
 
 @login_required
@@ -48,7 +53,7 @@ def register():
         return render_template("register.html", form=form)
 
     if not bc.check_password_hash(current_user.password, form.currentPassword.data):
-        flash("Incorrect password!", "error")
+        flash("Incorrect password!", "danger")
         return render_template("register.html", form=form)
 
     newUser = User_(form.username.data, form.password.data)
@@ -77,7 +82,7 @@ def upload():
     form = CSVUpload()
     if not form.validate_on_submit():
         if len(form.errors) != 0:
-            flash("Invalid File Type", "error")
+            flash("Invalid File Type", "danger")
         return render_template("upload.html", form=form)
 
     # Read and parse CSV Data
@@ -86,7 +91,7 @@ def upload():
     parsedData = [i.strip('\r').split(',') for i in rawData]
     if parsedData[0] != ["Ticket", "ID", "LAST", "MI", "FIRST", "GR", "Payment Method", "Guest YN", "Guest Ticket "
                                                                                                     "Number"]:
-        flash("Invalid CSV", "error")
+        flash("Invalid CSV", "danger")
         return render_template("upload.html", form=form)
 
     del parsedData[0]

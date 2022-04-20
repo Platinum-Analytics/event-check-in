@@ -1,0 +1,25 @@
+{% extends "base2.html" %}
+{% block content %}
+    <section class="bg-dark text-light mt-5">
+        <div class="container">
+            <p class="h1 py-2">Event Check In</p>
+        </div>
+    </section>
+
+    <section class="m-5">
+        <div class="container">
+            <p class="h1 my-3">Login</p>
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                <div class="mb-3">
+                    {{ form.username.label(class="form-label") }}
+                    {{ form.username(class="form-control") }}
+                </div>
+                <div class="mb-3">
+                    {{ form.password.label(class="form-label") }}
+                    {{ form.password(class="form-control") }}
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock %}

@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <title>Event Check In</title>
 
-    <link rel="stylesheet" href={{ url_for("static", filename="css/style.css") }}>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href={{ url_for("static", filename="css/style.css") }}>
+
+
+    <script src="https://kit.fontawesome.com/044a3e87c4.js" crossorigin="anonymous"></script>
 </head>
 <body>
 
@@ -26,6 +28,8 @@
 {% block content %}{% endblock %}
 
 <script src={{ url_for("static", filename="js/base.js") }}></script>
+
+{# File specific javascript file #}
 <script src={{ url_for("static", filename="js/" ~ self._TemplateReference__context.name.split(".")[0] ~ ".js") }}></script>
 
 </body>

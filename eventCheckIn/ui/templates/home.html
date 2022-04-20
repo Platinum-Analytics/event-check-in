@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="flex main">
+        <div class="flex sub">
+            <div class="flex-section">
+                <button class="w3-button w3-light-gray">Hi</button>
+            </div>
+            <div class="flex-section">
+                <a href="{{ url_for("main.attendees") }}" class="w3-button w3-light-gray">
+                    <i class="fa-solid fa-users"></i>
+                    Guest List
+                </a>
+            </div>
+            <div class="flex-section">
+                <button class="w3-button w3-light-gray">Hi</button>
+            </div>
+            <div class="flex-section">
+                <a href="{{ url_for("main.logout") }}" class="w3-button w3-light-gray">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    Logout
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

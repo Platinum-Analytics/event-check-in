@@ -32,7 +32,7 @@ collapseAll.addEventListener("click", function () {
 function collapseGuest(guestBtn) {
     let rows = document.querySelectorAll(`tr[parent_id='${guestBtn.getAttribute('parent_id')}']`)
 
-    guestBtn.children[0].className = "fa fa-chevron-down"
+    guestBtn.children[0].className = "fa-solid fa-chevron-down"
     guestBtn.title = "Show Guests"
 
     for (let j = 0; j < rows.length; j++) {
@@ -43,7 +43,7 @@ function collapseGuest(guestBtn) {
 function expandGuest(guestBtn) {
     let rows = document.querySelectorAll(`tr[parent_id='${guestBtn.getAttribute('parent_id')}']`)
 
-    guestBtn.children[0].className = "fa fa-chevron-up"
+    guestBtn.children[0].className = "fa-solid fa-chevron-up"
     guestBtn.title = "Hide Guests"
 
     for (let j = 0; j < rows.length; j++) {
