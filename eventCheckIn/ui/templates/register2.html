@@ -8,7 +8,7 @@
 
     <section class="my-5">
         <div class="container-sm">
-            <p class="h1 my-3">Login</p>
+            <p class="h1 my-3">Register</p>
             <form method="POST">
                 {{ form.hidden_tag() }}
                 <div class="mb-3">
@@ -20,11 +20,11 @@
                     {{ form.password(class="form-control") }}
                 </div>
                 <div class="mb-3">
-                    {{ form.remember.label(class="form-check-label") }}
-                    {{ form.remember(class="form-check-input mx-1", type="checkbox") }}
+                    {{ form.currentPassword.label(class="form-label") }}
+                    {{ form.currentPassword(class="form-control") }}
                 </div>
                 <div class="mb-3">
-                    <button class="btn btn-primary" type="submit">Log In</button>
+                    <button class="btn btn-primary" type="submit">Register</button>
                 </div>
             </form>
         </div>

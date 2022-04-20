@@ -28,13 +28,13 @@ def login():
         flash("Incorrect Password!", "danger")
         return render_template("login2.html", form=form)
 
-    login_user(user)
+    login_user(user, remember=form.remember)
     flash("Logged In Successfully!", "success")
 
     if "next" in session:
-        nextVal = session["next"]
-        if nextVal != "/logout":
-            return redirect(nextVal)
+        next_val = session["next"]
+        if next_val != "/logout":
+            return redirect(next_val)
 
     return render_template("home.html")
 
@@ -50,11 +50,11 @@ def register():
     if not form.validate_on_submit():
         if len(form.errors) != 0:
             flash("Invalid Username/Password", "warn")
-        return render_template("register.html", form=form)
+        return render_template("register2.html", form=form)
 
     if not bc.check_password_hash(current_user.password, form.currentPassword.data):
         flash("Incorrect password!", "danger")
-        return render_template("register.html", form=form)
+        return render_template("register2.html", form=form)
 
     newUser = User_(form.username.data, form.password.data)
 
@@ -64,7 +64,7 @@ def register():
     except IntegrityError:
         db.session.rollback()
         flash("That username already exists!", "info")
-        return render_template("register.html", form=form)
+        return render_template("register2.html", form=form)
 
     flash("Successfully Registered!", "success")
     return redirect(url_for("main.login"))
