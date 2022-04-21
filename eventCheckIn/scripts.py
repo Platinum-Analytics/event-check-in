@@ -39,4 +39,4 @@ def checkCash(value: str) -> tuple | None:
 
 @lm.user_loader
 def load_user(user_id):
-    return User_.query.get(int(user_id))
+    return User_.query.filter_by(session_token=user_id).first()

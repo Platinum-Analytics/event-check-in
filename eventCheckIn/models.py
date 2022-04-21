@@ -1,6 +1,6 @@
 from flask_login import UserMixin
 
-from .extensions import db, bc
+from .extensions import db, bc, serializer
 
 
 # Attendee database models
@@ -53,10 +53,15 @@ class Guest(Attendee):  # Non-PHS Student
 # Logins database model
 
 class User_(UserMixin, db.Model):  # NOT User due to Postgresql constraints
-    id = db.Column(db.INTEGER, primary_key=True)  # NOT "_id" due to UserMixin getId() constraints
+    id = db.Column(db.INTEGER, primary_key=True)
+    session_token = db.Column(db.INTEGER, nullable=False, unique=True)
     username = db.Column(db.VARCHAR(255), unique=True)
     password = db.Column(db.VARCHAR(255))
 
     def __init__(self, username, password):
         self.username = username
         self.password = bc.generate_password_hash(password).decode("utf8")
+        self.session_token = serializer.dumps([self.username, self.password])
+
+    def get_id(self):
+        return str(self.session_token)

@@ -1,6 +1,6 @@
 from flask import Flask
 
-from .extensions import csrf, db, lm, bc
+from .extensions import csrf, db, lm, bc, session
 from .routes import *
 
 
@@ -13,6 +13,7 @@ def create_app():
     db.init_app(app)
     lm.init_app(app)
     bc.init_app(app)
+    session.init_app(app)
 
     lm.login_view = 'main.login'
     lm.login_message = "Please Log In!"

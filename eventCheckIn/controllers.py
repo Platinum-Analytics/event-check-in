@@ -28,7 +28,8 @@ def login():
         flash("Incorrect Password!", "danger")
         return render_template("login2.html", form=form)
 
-    login_user(user, remember=form.remember)
+    print(form.remember.data)
+    login_user(user, remember=form.remember.data)
     flash("Logged In Successfully!", "success")
 
     if "next" in session:
@@ -83,7 +84,7 @@ def upload():
     if not form.validate_on_submit():
         if len(form.errors) != 0:
             flash("Invalid File Type", "danger")
-        return render_template("upload.html", form=form)
+        return render_template("upload2.html", form=form)
 
     # Read and parse CSV Data
     rawData = form.csvData.data.read().decode().split('\n')
@@ -92,7 +93,7 @@ def upload():
     if parsedData[0] != ["Ticket", "ID", "LAST", "MI", "FIRST", "GR", "Payment Method", "Guest YN", "Guest Ticket "
                                                                                                     "Number"]:
         flash("Invalid CSV", "danger")
-        return render_template("upload.html", form=form)
+        return render_template("upload2.html", form=form)
 
     del parsedData[0]
 
@@ -128,7 +129,7 @@ def upload():
 
     db.session.commit()
     flash("File Successfully Uploaded!", "success")
-    return render_template("upload.html", form=form)
+    return render_template("upload2.html", form=form)
 
 
 @login_required
