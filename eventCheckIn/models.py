@@ -54,7 +54,7 @@ class Guest(Attendee):  # Non-PHS Student
 
 class User_(UserMixin, db.Model):  # NOT User due to Postgresql constraints
     _id = db.Column(db.INTEGER, primary_key=True)
-    session_token = db.Column(db.INTEGER, nullable=False, unique=True)
+    session_token = db.Column(db.VARCHAR, nullable=False, unique=True)
     email = db.Column(db.VARCHAR(255), unique=True)
     password = db.Column(db.VARCHAR(255))
     verified = db.Column(db.Boolean, nullable=False)
