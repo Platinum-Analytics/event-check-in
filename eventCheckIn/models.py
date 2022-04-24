@@ -53,15 +53,17 @@ class Guest(Attendee):  # Non-PHS Student
 # Logins database model
 
 class User_(UserMixin, db.Model):  # NOT User due to Postgresql constraints
-    id = db.Column(db.INTEGER, primary_key=True)
+    _id = db.Column(db.INTEGER, primary_key=True)
     session_token = db.Column(db.INTEGER, nullable=False, unique=True)
-    username = db.Column(db.VARCHAR(255), unique=True)
+    email = db.Column(db.VARCHAR(255), unique=True)
     password = db.Column(db.VARCHAR(255))
+    verified = db.Column(db.Boolean, nullable=False)
 
-    def __init__(self, username, password):
-        self.username = username
+    def __init__(self, email, password, verified):
+        self.email = email
         self.password = bc.generate_password_hash(password).decode("utf8")
-        self.session_token = serializer.dumps([self.username, self.password])
+        self.session_token = serializer.dumps([self.email, self.password])
+        self.verified = verified
 
     def get_id(self):
         return str(self.session_token)

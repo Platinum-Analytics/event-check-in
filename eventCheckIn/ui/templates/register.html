@@ -1,44 +1,32 @@
 {% extends "base.html" %}
 {% block content %}
-    <div class="flex main">
-        <div class="flex sub">
-            <div class="flex sub-name">
-                <h1>Register</h1>
-            </div>
-            <div class="flex sub-content">
-                <form method="POST">
-                    {{ form.hidden_tag() }}
-                    <div class="group">
-                        <div class="element">
-                            {{ form.username.label }}
-                        </div>
-                        <div class="element">
-                            {{ form.username }}
-                        </div>
-                    </div>
-                    <div class="group">
-                        <div class="element">
-                            {{ form.password.label }}
-                        </div>
-                        <div class="element">
-                            {{ form.password }}
-                        </div>
-                    </div>
-                    <div class="group">
-                        <div class="element">
-                            {{ form.currentPassword.label }}
-                        </div>
-                        <div class="element">
-                            {{ form.currentPassword }}
-                        </div>
-                    </div>
-                    <div class="group">
-                        <div class="element">
-                            <input class="w3-button w3-green" type="submit" value="Register">
-                        </div>
-                    </div>
-                </form>
-            </div>
+    <section class="bg-dark text-light mt-5">
+        <div class="container-sm">
+            <p class="h1 py-2">Event Check In</p>
         </div>
-    </div>
+    </section>
+
+    <section class="my-5">
+        <div class="container-sm">
+            <p class="h1 my-3">Register</p>
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                <div class="mb-3">
+                    {{ form.email.label(class="form-label") }}
+                    {{ form.email(class="form-control") }}
+                </div>
+                <div class="mb-3">
+                    {{ form.password.label(class="form-label") }}
+                    {{ form.password(class="form-control") }}
+                </div>
+                <div class="mb-3">
+                    {{ form.confirmPassword.label(class="form-label") }}
+                    {{ form.confirmPassword(class="form-control") }}
+                </div>
+                <div class="mb-3">
+                    <button class="btn btn-primary" type="submit">Register</button>
+                </div>
+            </form>
+        </div>
+    </section>
 {% endblock %}

@@ -1,25 +1,52 @@
 {% extends "base.html" %}
 {% block content %}
-    <div class="flex main">
-        <div class="flex sub">
-            <div class="flex-section">
-                <button class="w3-button w3-light-gray">Hi</button>
-            </div>
-            <div class="flex-section">
-                <a href="{{ url_for("main.attendees") }}" class="w3-button w3-light-gray">
-                    <i class="fa-solid fa-users"></i>
-                    Guest List
-                </a>
-            </div>
-            <div class="flex-section">
-                <button class="w3-button w3-light-gray">Hi</button>
-            </div>
-            <div class="flex-section">
-                <a href="{{ url_for("main.logout") }}" class="w3-button w3-light-gray">
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                    Logout
-                </a>
+    <section class="bg-dark text-light mt-5">
+        <div class="container-sm">
+            <p class="h1 py-2">Event Check In</p>
+        </div>
+    </section>
+
+    <section class="my-5">
+        <div class="container">
+            <p class="h1 my-3">Home</p>
+            <div class="row">
+                <div class="col-lg d-flex align-items-center justify-content-center">
+                    <img src="{{ url_for("static", filename="assets/blueSpiral.png") }}" alt="Blue Spiral"
+                         class="img-fluid my-2">
+                </div>
+                <div class="col-lg d-flex flex-column">
+                    <div class="row align-items-stretch flex-grow-1">
+                        <div class="col-sm d-flex">
+                            <a class="btn btn-outline-dark flex-fill d-flex align-items-center justify-content-center my-2">
+                                <i class="bi bi-search me-3 me-sm-0 me-lg-3 fs-1"></i>
+                                <span class="d-inline d-sm-none d-lg-inline">Search</span>
+                            </a>
+                        </div>
+                        <div class="col-sm d-flex">
+                            <a href="{{ url_for("main.attendees") }}"
+                               class="btn btn-outline-dark flex-fill d-flex align-items-center justify-content-center my-2">
+                                <i class="bi bi-people-fill me-3 me-sm-0 me-lg-3 fs-1"></i>
+                                <span class="d-inline d-sm-none d-lg-inline">Guest List</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row align-items-stretch flex-grow-1">
+                        <div class="col-sm d-flex">
+                            <a href="{{ url_for("main.upload") }}"
+                               class="btn btn-outline-dark flex-fill d-flex align-items-center justify-content-center my-2">
+                                <i class="bi bi-upload me-3 me-sm-0 me-lg-3 fs-1"></i>
+                                <span class="d-inline d-sm-none d-lg-inline">Upload CSV</span>
+                            </a>
+                        </div>
+                        <div class="col-sm d-flex">
+                            <a class="btn btn-outline-dark flex-fill d-flex align-items-center justify-content-center my-2">
+                                <i class="bi bi-gear-fill me-3 me-sm-0 me-lg-3 fs-1"></i>
+                                <span class="d-inline d-sm-none d-lg-inline">Settings</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    </section>
 {% endblock %}

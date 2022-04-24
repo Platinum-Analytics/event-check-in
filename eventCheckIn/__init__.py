@@ -1,7 +1,7 @@
 from flask import Flask
 
-from .extensions import csrf, db, lm, bc, session
-from .routes import *
+from .extensions import csrf, db, lm, bc, session, mail
+from .routes import main, verify
 
 
 def create_app():
@@ -14,12 +14,18 @@ def create_app():
     lm.init_app(app)
     bc.init_app(app)
     session.init_app(app)
+    mail.init_app(app)
 
     lm.login_view = 'main.login'
-    lm.login_message = "Please Log In!"
+    lm.login_message = "Please Log In"
     lm.login_message_category = "info"
 
+    lm.refresh_view = "main.reauthenticate"
+    lm.needs_refresh_message = "Please confirm your password"
+    lm.needs_refresh_message_category = "info"
+
     app.register_blueprint(main)
+    app.register_blueprint(verify)
 
     with app.app_context():
         db.create_all()

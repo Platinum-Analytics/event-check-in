@@ -1,43 +1,45 @@
 from flask import render_template, redirect, url_for, session, flash
-from flask_login import login_user, logout_user, login_required, current_user
-from sqlalchemy.exc import IntegrityError
+from flask_login import login_user, logout_user, login_required, fresh_login_required, confirm_login, current_user
+from flask_mail import Message
+from itsdangerous import BadTimeSignature, SignatureExpired
 
-from .extensions import db, bc
-from .forms import CSVUpload, UserLogin, UserRegister
+from .extensions import db, bc, timedSerializer, mail
+from .forms import CSVUpload, UserLogin, UserRegister, AuthenticateUser, ChangePassword
 from .models import Student, Guest, User_
 from .scripts import checkString, checkInt, checkBool, checkCash
 
 
 def index():
-    return redirect(url_for("main.login"))
+    return redirect(url_for("main.home"))
 
 
 def login():
     form = UserLogin()
     if not form.validate_on_submit():
         if len(form.errors) != 0:
-            flash("Invalid Username/Password", "warn")
-        return render_template("login2.html", form=form)
+            flash("Invalid email/password", "warn")
+        return render_template("login.html", form=form)
 
-    user = User_.query.filter_by(username=form.username.data).first()
+    user = User_.query.filter_by(email=form.email.data).first()
 
     if not user:
-        flash("User does not exist!", "info")
-        return render_template("login2.html", form=form)
+        flash("User does not exist", "info")
+        return render_template("login.html", form=form)
+    elif not user.verified:
+        flash("Please confirm your email", "warn")
     elif not bc.check_password_hash(user.password, form.password.data):
-        flash("Incorrect Password!", "danger")
-        return render_template("login2.html", form=form)
+        flash("Incorrect password!", "danger")
+        return render_template("login.html", form=form)
 
-    print(form.remember.data)
     login_user(user, remember=form.remember.data)
-    flash("Logged In Successfully!", "success")
+    flash("Logged in successfully!", "success")
 
     if "next" in session:
         next_val = session["next"]
         if next_val != "/logout":
             return redirect(next_val)
 
-    return render_template("home.html")
+    return redirect(url_for("main.home"))
 
 
 @login_required
@@ -45,30 +47,57 @@ def home():
     return render_template("home.html")
 
 
-@login_required
+@fresh_login_required
 def register():
     form = UserRegister()
     if not form.validate_on_submit():
         if len(form.errors) != 0:
-            flash("Invalid Username/Password", "warn")
-        return render_template("register2.html", form=form)
+            flash("Invalid email/password", "warn")
+        return render_template("register.html", form=form)
 
-    if not bc.check_password_hash(current_user.password, form.currentPassword.data):
-        flash("Incorrect password!", "danger")
-        return render_template("register2.html", form=form)
+    user_search = User_.query.filter_by(email=form.email.data).first()
+    if user_search:
+        if user_search.verified:
+            flash("Email already registered", "info")
+            return render_template("register.html", form=form)
+        else:
+            db.session.delete(user_search)
+            db.session.commit()
 
-    newUser = User_(form.username.data, form.password.data)
+    if form.password.data != form.confirmPassword.data:
+        flash("Passwords do not match", "danger")
+        return render_template("register.html", form=form)
 
-    try:
-        db.session.add(newUser)
-        db.session.commit()
-    except IntegrityError:
-        db.session.rollback()
-        flash("That username already exists!", "info")
-        return render_template("register2.html", form=form)
+    user = User_(form.email.data, form.password.data, False)
+    db.session.add(user)
+    db.session.commit()
 
-    flash("Successfully Registered!", "success")
+    confirm_email = Message("Event Check In Email Confirmation",
+                            sender=("Platinum Analytics", "SMCS2024.PlatinumAnalytics.com"),
+                            recipients=[form.email.data])
+
+    confirm_email.html = render_template("verify/email.html", token=timedSerializer.dumps(form.email.data))
+    mail.send(confirm_email)
+
+    flash("Email verification sent, please confirm your email", "success")
     return redirect(url_for("main.login"))
+
+
+def verify(token):
+    try:
+        email = timedSerializer.loads(token, max_age=3600)
+
+        user = User_.query.filter_by(email=email).first()
+        user.verified = True
+        db.session.commit()
+
+        flash("User successfully registered", "success")
+    except SignatureExpired:
+        flash("Verification expired, please re-register", "danger")
+    except BadTimeSignature:
+        ...  # Unauthorized, simply redirect to login page
+    finally:
+        return redirect(url_for("main.login"))
 
 
 @login_required
@@ -81,10 +110,11 @@ def logout():
 @login_required
 def upload():
     form = CSVUpload()
+    print(form.csvData.data)
     if not form.validate_on_submit():
         if len(form.errors) != 0:
             flash("Invalid File Type", "danger")
-        return render_template("upload2.html", form=form)
+        return render_template("upload.html", form=form)
 
     # Read and parse CSV Data
     rawData = form.csvData.data.read().decode().split('\n')
@@ -93,7 +123,7 @@ def upload():
     if parsedData[0] != ["Ticket", "ID", "LAST", "MI", "FIRST", "GR", "Payment Method", "Guest YN", "Guest Ticket "
                                                                                                     "Number"]:
         flash("Invalid CSV", "danger")
-        return render_template("upload2.html", form=form)
+        return render_template("upload.html", form=form)
 
     del parsedData[0]
 
@@ -129,7 +159,7 @@ def upload():
 
     db.session.commit()
     flash("File Successfully Uploaded!", "success")
-    return render_template("upload2.html", form=form)
+    return render_template("upload.html", form=form)
 
 
 @login_required
@@ -137,3 +167,31 @@ def attendees():
     students = Student.query.all()
     guests = Guest.query.all()
     return render_template("attendees.html", students=students, guests=guests)
+
+
+@fresh_login_required
+def settings():
+    return render_template("settings.html")
+
+
+@login_required
+def reauthenticate():
+    form = AuthenticateUser()
+    if not form.validate_on_submit():
+        if len(form.errors) != 0:
+            flash("Invalid password", "warn")
+        return render_template("reauthenticate.html", form=form)
+
+    if not bc.check_password_hash(current_user.password, form.password.data):
+        flash("Incorrect password!", "danger")
+        return render_template("reauthenticate.html", form=form)
+
+    confirm_login()
+    flash("Password confirmed", "success")
+
+    if "next" in session:
+        next_val = session["next"]
+        if next_val != "/logout":
+            return redirect(next_val)
+
+    return render_template("home.html")

@@ -1,0 +1,36 @@
+{% extends "old/base.html" %}
+{% block content %}
+    <div class="flex main">
+        <div class="flex sub">
+            <div class="flex sub-name">
+                <h1>Login!</h1>
+            </div>
+            <div class="flex sub-content">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="group">
+                        <div class="element">
+                            {{ form.username.label }}
+                        </div>
+                        <div class="element">
+                            {{ form.username }}
+                        </div>
+                    </div>
+                    <div class="group">
+                        <div class="element">
+                            {{ form.password.label }}
+                        </div>
+                        <div class="element">
+                            {{ form.password }}
+                        </div>
+                    </div>
+                    <div class="group">
+                        <div class="element">
+                            <input class="w3-button w3-green" type="submit" value="Login">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
