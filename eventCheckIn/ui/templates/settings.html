@@ -1,4 +1,31 @@
 {% extends "base.html" %}
 {% block content %}
-    <h1>hi</h1>
+    <section class="bg-dark text-light mt-5">
+        <div class="container-sm">
+            <p class="h1 py-2">Event Check In</p>
+        </div>
+    </section>
+
+    <section class="my-5">
+        <div class="container-sm">
+            <p class="h1 my-3">Settings</p>
+
+            <div class="row">
+                <div class="col d-flex flex-column">
+                    <a href="{{ url_for("main.register") }}" class="btn btn-outline-dark flex-fill my-2">
+                        <span class="">Register</span>
+                    </a>
+                    <a href="" class="btn btn-outline-dark flex-fill my-2">
+                        <span class="">Reset Database</span>
+                    </a>
+                    <a href="{{ url_for("main.logout") }}" class="btn btn-outline-dark flex-fill my-2">
+                        <span class="">Logout</span>
+                    </a>
+                </div>
+                <div class="col">
+                    Hi
+                </div>
+            </div>
+        </div>
+    </section>
 {% endblock %}
