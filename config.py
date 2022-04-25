@@ -3,7 +3,7 @@ from datetime import timedelta
 
 
 class Config(object):
-    SECRET_KEY = os.urandom(32)
+    SECRET_KEY = os.environ.get("SECRET_KEY")
 
     # flask-login
     USE_SESSION_FOR_NEXT = True
