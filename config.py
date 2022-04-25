@@ -10,7 +10,7 @@ class Config(object):
     REMEMBER_COOKIE_DURATION = timedelta(hours=168)
 
     # flask-session
-    SESSION_TYPE = "filesystem"
+    SESSION_TYPE = "sqlalchemy"
     PERMANENT_SESSION_LIFETIME = timedelta(hours=24)
 
     # flask-SQLAlchemy
@@ -30,4 +30,3 @@ class Config(object):
     MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
     MAIL_DEFAULT_SENDER = "Platinum Analytics"
     MAIL_MAX_EMAILS = 5
-

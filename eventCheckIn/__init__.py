@@ -13,8 +13,9 @@ def create_app():
     db.init_app(app)
     lm.init_app(app)
     bc.init_app(app)
-    session.init_app(app)
     mail.init_app(app)
+    app.config["SESSION_SQLALCHEMY"] = db  # Requires db to be initialized
+    session.init_app(app)  # Requires SESSION_SQLALCHEMY to be set
 
     lm.login_view = 'main.login'
     lm.login_message = "Please Log In"
