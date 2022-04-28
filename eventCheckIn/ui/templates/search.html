@@ -28,7 +28,7 @@
                     </thead>
                     <tbody>
                     {% for i in students %}
-                        <tr>
+                        <tr data-bs-toggle="modal" data-bs-target="#modal-{{ i.school_id }}">
                             <td>{{ i.ticket_num }}</td>
                             <td>{{ i.school_id }}</td>
                             <td>{{ i.first_name }}</td>
@@ -55,7 +55,7 @@
                     </thead>
                     <tbody>
                     {% for j in guests %}
-                        <tr>
+                        <tr data-bs-toggle="modal" data-bs-target="#modal-{{ j.host_id }}-{{ j.id }}">
                             <td>{{ j.ticket_num }}</td>
                             <td>{{ j.first_name }}</td>
                             <td>{{ j.last_name }}</td>
@@ -66,4 +66,54 @@
             </div>
         </section>
     {% endif %}
+
+    {% for i in students %}
+        <div class="modal fade" id="modal-{{ i.school_id }}" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="h5 modal-title">
+                            {{ i.last_name }}, {{ i.first_name }}
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            Close
+                        </button>
+                        <a type="button" class="btn btn-primary">Check In/Out</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
+    {% for j in guests %}
+        <div class="modal fade" id="modal-{{ j.host_id }}-{{ j.id }}" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="h5 modal-title">
+                            {{ j.last_name }}, {{ j.first_name }}
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            Close
+                        </button>
+                        <a type="button" class="btn btn-primary">Check In/Out</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
 {% endblock %}

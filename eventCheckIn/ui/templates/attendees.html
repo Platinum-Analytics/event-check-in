@@ -102,7 +102,7 @@
                                         <tbody>
                                         {% for j in i.guests %}
                                             <tr data-bs-toggle="modal"
-                                                data-bs-target="#modal-{{ i.school_id }}-{{ j.first_name }}">
+                                                data-bs-target="#modal-{{ i.school_id }}-{{ j.id }}">
                                                 <td class="py-3">{{ j.ticket_num }}</td>
                                                 <td class="py-3">{{ j.first_name }}</td>
                                                 <td class="py-3">{{ j.last_name }}</td>
@@ -130,7 +130,7 @@
         </div>
 
         {% for j in i.guests %}
-            <div class="modal fade" id="modal-{{ i.school_id }}-{{ j.first_name }}" tabindex="-1">
+            <div class="modal fade" id="modal-{{ i.school_id }}-{{ j.id }}" tabindex="-1">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -144,13 +144,13 @@
                             <nav>
                                 <div class="nav nav-tabs" role="tablist">
                                     <button class="nav-link active" data-bs-toggle="tab"
-                                            data-bs-target="#info-{{ i.school_id }}-{{ j.first_name }}"
+                                            data-bs-target="#info-{{ i.school_id }}-{{ j.id }}"
                                             type="button"
                                             role="tab">
                                         Info
                                     </button>
                                     <button class="nav-link" data-bs-toggle="tab"
-                                            data-bs-target="#log-{{ i.school_id }}-{{ j.first_name }}"
+                                            data-bs-target="#log-{{ i.school_id }}-{{ j.id }}"
                                             type="button"
                                             role="tab">
                                         Log
@@ -159,7 +159,7 @@
                             </nav>
                             <div class="tab-content">
                                 <div class="tab-pane fade show active"
-                                     id="info-{{ i.school_id }}-{{ j.first_name }}"
+                                     id="info-{{ i.school_id }}-{{ j.id }}"
                                      role="tabpanel">
                                     <div class="container mt-4">
                                         <table class="table">
@@ -178,7 +178,7 @@
                                         </table>
                                     </div>
                                 </div>
-                                <div class="tab-pane fade" id="log-{{ i.school_id }}-{{ j.first_name }}"
+                                <div class="tab-pane fade" id="log-{{ i.school_id }}-{{ j.id }}"
                                      role="tabpanel">
                                     hi
                                 </div>
