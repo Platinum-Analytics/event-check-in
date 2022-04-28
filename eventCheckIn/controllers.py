@@ -1,10 +1,12 @@
 from flask import render_template, redirect, url_for, session, flash
 from flask_login import login_user, logout_user, login_required, fresh_login_required, confirm_login, current_user
 from flask_mail import Message
+
+from sqlalchemy import or_
 from itsdangerous import BadTimeSignature, SignatureExpired
 
 from .extensions import db, bc, timedSerializer, mail
-from .forms import CSVUpload, UserLogin, UserRegister, AuthenticateUser, ChangePassword
+from .forms import CSVUpload, UserLogin, UserRegister, AuthenticateUser, ChangePassword, Search
 from .models import Student, Guest, User_
 from .scripts import checkString, checkInt, checkBool, checkCash
 
@@ -36,7 +38,7 @@ def login():
 
     if "next" in session:
         next_val = session["next"]
-        if next_val != "/logout":
+        if next_val.split("/")[1] != "action":
             return redirect(next_val)
 
     return redirect(url_for("main.home"))
@@ -45,6 +47,36 @@ def login():
 @login_required
 def home():
     return render_template("home.html")
+
+
+@login_required
+def search():
+    form = Search()
+    if not form.validate_on_submit():
+        if len(form.errors) != 0:
+            flash("Invalid input", "warn")
+        return render_template("search.html", form=form)
+
+    students =[]
+    guests = []
+    try:
+        query = int(form.query.data)
+        students = Student.query.filter(or_(Student.ticket_num == query, Student.school_id == query)).all()
+
+        guests = Guest.query.filter_by(ticket_num=query).all()
+    except ValueError:
+        query = form.query.data.title()
+
+        students = Student.query.filter(or_(Student.first_name == query, Student.last_name == query)).all()
+        guests = Guest.query.filter(or_(Guest.first_name == query, Guest.last_name == query)).all()
+
+    finally:
+        for i in students:
+            for j in i.guests:
+                guests.append(j)
+        print(students, guests)
+
+    return render_template("search.html", form=form, students=students, guests=guests)
 
 
 @fresh_login_required
@@ -83,34 +115,9 @@ def register():
     return redirect(url_for("main.login"))
 
 
-def verify(token):
-    try:
-        email = timedSerializer.loads(token, max_age=3600)
-
-        user = User_.query.filter_by(email=email).first()
-        user.verified = True
-        db.session.commit()
-
-        flash("User successfully registered", "success")
-    except SignatureExpired:
-        flash("Verification expired, please re-register", "danger")
-    except BadTimeSignature:
-        ...  # Unauthorized, simply redirect to login page
-    finally:
-        return redirect(url_for("main.login"))
-
-
-@login_required
-def logout():
-    logout_user()
-    flash("Successfully logged out!", "success")
-    return redirect(url_for("main.login"))
-
-
 @login_required
 def upload():
     form = CSVUpload()
-    print(form.csvData.data)
     if not form.validate_on_submit():
         if len(form.errors) != 0:
             flash("Invalid File Type", "danger")
@@ -171,7 +178,19 @@ def attendees():
 
 @fresh_login_required
 def settings():
-    return render_template("settings.html")
+    form = ChangePassword()
+    if not form.validate_on_submit():
+        ...
+    elif not bc.check_password_hash(current_user.password, form.currentPassword.data):
+        flash("Incorrect password", "danger")
+    elif form.newPassword.data != form.confirmNewPassword.data:
+        flash("Passwords don't match", "danger")
+    else:
+        current_user.changePassword(form.newPassword.data)
+        db.session.commit()
+        return redirect(url_for("action.logout"))
+
+    return render_template("settings.html", form=form)
 
 
 @login_required
@@ -191,7 +210,41 @@ def reauthenticate():
 
     if "next" in session:
         next_val = session["next"]
-        if next_val != "/logout":
+        if next_val.split("/")[1] != "action":
             return redirect(next_val)
 
     return render_template("home.html")
+
+
+@login_required
+def resetDB():
+    db.session.execute(Guest.__table__.delete())
+    db.session.execute(Student.__table__.delete())
+    db.session.commit()
+
+    flash("Database reset", "success")
+    return redirect(url_for("main.settings"))
+
+
+@login_required
+def logout():
+    logout_user()
+    flash("Successfully logged out!", "success")
+    return redirect(url_for("main.login"))
+
+
+def verify(token):
+    try:
+        email = timedSerializer.loads(token, max_age=3600)
+
+        user = User_.query.filter_by(email=email).first()
+        user.verified = True
+        db.session.commit()
+
+        flash("User successfully registered", "success")
+    except SignatureExpired:
+        flash("Verification expired, please re-register", "danger")
+    except BadTimeSignature:
+        ...  # Unauthorized, simply redirect to login page
+    finally:
+        return redirect(url_for("main.login"))

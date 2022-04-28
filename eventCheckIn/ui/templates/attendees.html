@@ -1,11 +1,5 @@
 {% extends "base.html" %}
 {% block content %}
-    <section class="bg-dark text-light mt-5">
-        <div class="container-sm">
-            <p class="h1 py-2">Event Check In</p>
-        </div>
-    </section>
-
     <section class="my-5">
         <div class="container-sm">
             <p class="h1 my-3">All Attendees</p>
@@ -14,7 +8,7 @@
                 <thead>
                 <tr>
                     <th>Ticket #</th>
-                    <th>School ID</th>
+                    <th>Student ID</th>
                     <th>First Name</th>
                     <th>Last Name</th>
                     <th></th>
@@ -22,49 +16,187 @@
                 </thead>
                 <tbody>
                 {% for i in students %}
-                    <tr>
+                    <tr data-bs-toggle="modal" data-bs-target="#modal-{{ i.school_id }}">
                         <td class="py-3">{{ i.ticket_num }}</td>
                         <td class="py-3">{{ i.school_id }}</td>
                         <td class="py-3">{{ i.first_name }}</td>
                         <td class="py-3">{{ i.last_name }}</td>
                         {% if i.guests %}
                             <td>
-                                <button class="btn btn-primary" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#guestTable{{ i.school_id }}">
-                                    Hi
-                                </button>
+                                <i class="bi bi-person-fill"></i>
                             </td>
                         {% else %}
-                            <td class="py-3"></td>
+                            <td></td>
                         {% endif %}
                     </tr>
-                    {% if i.guests %}
-                        <tr class="collapse show" id="guestTable{{ i.school_id }}">
-                            <td colspan="5">
-                                <table class="table mb-0">
-                                    {% for j in i.guests %}
-                                        <thead>
-                                        <tr>
-                                            <th>Ticket #</th>
-                                            <th>First Name</th>
-                                            <th>Last Name</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr>
-                                            <td>{{ j.ticket_num }}</td>
-                                            <td>{{ j.first_name }}</td>
-                                            <td>{{ j.last_name }}</td>
-                                        </tr>
-                                        </tbody>
-                                    {% endfor %}
-                                </table>
-                            </td>
-                        </tr>
-                    {% endif %}
                 {% endfor %}
                 </tbody>
             </table>
         </div>
     </section>
+
+    {% for i in students %}
+        <div class="modal fade" id="modal-{{ i.school_id }}" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="h5 modal-title">
+                            {{ i.last_name }}, {{ i.first_name }}
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <nav>
+                            <div class="nav nav-tabs" role="tablist">
+                                <button class="nav-link active" data-bs-toggle="tab"
+                                        data-bs-target="#info-{{ i.school_id }}" type="button" role="tab">
+                                    Info
+                                </button>
+                                {% if i.guests %}
+                                    <button class="nav-link" data-bs-toggle="tab"
+                                            data-bs-target="#guests-{{ i.school_id }}" type="button"
+                                            role="tab">
+                                        Guests
+                                    </button>
+                                {% endif %}
+                                <button class="nav-link" data-bs-toggle="tab"
+                                        data-bs-target="#log-{{ i.school_id }}" type="button" role="tab">
+                                    Log
+                                </button>
+                            </div>
+                        </nav>
+
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="info-{{ i.school_id }}"
+                                 role="tabpanel">
+                                <div class="container mt-4">
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <th>Ticket #</th>
+                                            <th>Student ID</th>
+                                            <th>{{ "Payment Type" if i.is_cash else "Check #" }}</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td>{{ i.ticket_num }}</td>
+                                            <td>{{ i.school_id }}</td>
+                                            <td>{{ "Cash" if i.is_cash else i.check_num }}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="guests-{{ i.school_id }}" role="tabpanel">
+                                <div class="container mt-4">
+                                    <table class="table table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th>Ticket #</th>
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
+                                            <th>Payment Type</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for j in i.guests %}
+                                            <tr data-bs-toggle="modal"
+                                                data-bs-target="#modal-{{ i.school_id }}-{{ j.first_name }}">
+                                                <td class="py-3">{{ j.ticket_num }}</td>
+                                                <td class="py-3">{{ j.first_name }}</td>
+                                                <td class="py-3">{{ j.last_name }}</td>
+                                                <td class="py-3">{{ "Cash" if j.is_cash else j.check_num }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade" id="log-{{ i.school_id }}" role="tabpanel">
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% for j in i.guests %}
+            <div class="modal fade" id="modal-{{ i.school_id }}-{{ j.first_name }}" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <div class="h5 modal-title">
+                                {{ j.last_name }}, {{ j.first_name }}
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+
+                            <nav>
+                                <div class="nav nav-tabs" role="tablist">
+                                    <button class="nav-link active" data-bs-toggle="tab"
+                                            data-bs-target="#info-{{ i.school_id }}-{{ j.first_name }}"
+                                            type="button"
+                                            role="tab">
+                                        Info
+                                    </button>
+                                    <button class="nav-link" data-bs-toggle="tab"
+                                            data-bs-target="#log-{{ i.school_id }}-{{ j.first_name }}"
+                                            type="button"
+                                            role="tab">
+                                        Log
+                                    </button>
+                                </div>
+                            </nav>
+                            <div class="tab-content">
+                                <div class="tab-pane fade show active"
+                                     id="info-{{ i.school_id }}-{{ j.first_name }}"
+                                     role="tabpanel">
+                                    <div class="container mt-4">
+                                        <table class="table">
+                                            <thead>
+                                            <tr>
+                                                <th>Ticket #</th>
+                                                <th>{{ "Payment Type" if i.is_cash else "Check #" }}</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr>
+                                                <td>{{ j.ticket_num }}</td>
+                                                <td>{{ "Cash" if j.is_cash else j.check_num }}</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="log-{{ i.school_id }}-{{ j.first_name }}"
+                                     role="tabpanel">
+                                    hi
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                Close
+                            </button>
+                            <button class="btn btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#modal-{{ i.school_id }}">
+                                Return
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% endfor %}
 {% endblock %}

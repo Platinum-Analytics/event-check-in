@@ -13,7 +13,7 @@ def checkString(value: str) -> str | None:
     if value in ("", " "):
         return None
     else:
-        return value
+        return value.title()
 
 
 def checkBool(value: str) -> bool | None:

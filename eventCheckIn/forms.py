@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired, FileAllowed
-from wtforms import EmailField, PasswordField, BooleanField
+from wtforms import EmailField, PasswordField, BooleanField, StringField
 from wtforms.validators import InputRequired, Length
 
 
@@ -21,11 +21,14 @@ class UserRegister(FlaskForm):
 
 
 class ChangePassword(FlaskForm):
-    email = EmailField("Email", validators=[InputRequired()])
-    currentPassword = PasswordField("Current User Password", validators=[InputRequired()])
-    newPassword = PasswordField("Password", validators=[InputRequired(), Length(min=8, max=80)])
+    currentPassword = PasswordField("Current Password", validators=[InputRequired()])
+    newPassword = PasswordField("New Password", validators=[InputRequired(), Length(min=8, max=80)])
+    confirmNewPassword = PasswordField("Confirm New Password", validators=[InputRequired(), Length(min=8, max=80)])
 
 
 class AuthenticateUser(FlaskForm):
     password = PasswordField("Password", validators=[InputRequired()])
 
+
+class Search(FlaskForm):
+    query = StringField("Find User", validators=[InputRequired()])

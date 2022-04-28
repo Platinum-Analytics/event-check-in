@@ -5,3 +5,7 @@
 .gray {
     background-color: #d9d9d9;
 }
+
+.hover div:hover {
+    background-color: rgba(33, 37, 41, 0.08);
+}

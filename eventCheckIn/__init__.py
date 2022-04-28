@@ -1,7 +1,7 @@
 from flask import Flask
 
 from .extensions import csrf, db, lm, bc, session, mail
-from .routes import main, verify
+from .routes import main, action, verify
 
 
 def create_app():
@@ -26,6 +26,7 @@ def create_app():
     lm.needs_refresh_message_category = "info"
 
     app.register_blueprint(main)
+    app.register_blueprint(action)
     app.register_blueprint(verify)
 
     with app.app_context():

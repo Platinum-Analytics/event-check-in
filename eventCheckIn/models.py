@@ -65,5 +65,8 @@ class User_(UserMixin, db.Model):  # NOT User due to Postgresql constraints
         self.session_token = serializer.dumps([self.email, self.password])
         self.verified = verified
 
+    def changePassword(self, password):
+        self.password = bc.generate_password_hash(password).decode("utf8")
+
     def get_id(self):
         return str(self.session_token)

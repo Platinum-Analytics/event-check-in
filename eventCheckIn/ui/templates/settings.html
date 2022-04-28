@@ -1,31 +1,73 @@
 {% extends "base.html" %}
 {% block content %}
-    <section class="bg-dark text-light mt-5">
-        <div class="container-sm">
-            <p class="h1 py-2">Event Check In</p>
-        </div>
-    </section>
-
     <section class="my-5">
-        <div class="container-sm">
+        <div class="container">
             <p class="h1 my-3">Settings</p>
 
             <div class="row">
-                <div class="col d-flex flex-column">
-                    <a href="{{ url_for("main.register") }}" class="btn btn-outline-dark flex-fill my-2">
-                        <span class="">Register</span>
-                    </a>
-                    <a href="" class="btn btn-outline-dark flex-fill my-2">
-                        <span class="">Reset Database</span>
-                    </a>
-                    <a href="{{ url_for("main.logout") }}" class="btn btn-outline-dark flex-fill my-2">
-                        <span class="">Logout</span>
-                    </a>
+                <div class="col-md flex-grow-1 d-flex flex-column m-2">
+                    <div class="d-flex flex-grow-1">
+                        <a href="{{ url_for("main.register") }}"
+                           class="btn btn-outline-dark my-2 d-flex flex-fill align-items-center justify-content-center">
+                            <i class="bi bi-person-plus-fill me-3 fs-1"></i>
+                            <span class="fs-2">Register</span>
+                        </a>
+                    </div>
+                    <div class="d-flex flex-grow-1">
+                        <button class="btn btn-outline-dark my-2 d-flex flex-fill align-items-center justify-content-center"
+                                data-bs-toggle="modal" data-bs-target="#confirmReset">
+                            <i class="bi bi-arrow-clockwise me-3 fs-1"></i>
+                            <span class="fs-2">Reset Database</span>
+                        </button>
+                    </div>
+                    <div class="d-flex flex-grow-1">
+                        <a href="{{ url_for("action.logout") }}"
+                           class="btn btn-outline-dark my-2 d-flex flex-fill align-items-center justify-content-center">
+                            <i class="bi bi-box-arrow-right me-3 fs-1"></i>
+                            <span class="fs-2">Logout</span>
+                        </a>
+                    </div>
                 </div>
-                <div class="col">
-                    Hi
+                <div class="col-md d-flex flex-column m-2">
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        <div class="mb-3">
+                            {{ form.currentPassword.label(class="form-label") }}
+                            {{ form.currentPassword(class="form-control") }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.newPassword.label(class="form-label") }}
+                            {{ form.newPassword(class="form-control") }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.confirmNewPassword.label(class="form-label") }}
+                            {{ form.confirmNewPassword(class="form-control") }}
+                        </div>
+                        <div class="mb-2">
+                            <button class="btn btn-outline-primary" type="submit">Change Password</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </section>
+
+    <div class="modal fade" id="confirmReset" tabindex="-1" aria-labelledby="modalTitle">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="h5 modal-title" id="modalTitle">Confirm Reset</div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="fw-bold">Resetting the database will remove all students and guests</p>
+                    <p>Are you sure you'd like to continue?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                    <a href="{{ url_for("action.resetDB") }}" type="button" class="btn btn-danger">Reset</a>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

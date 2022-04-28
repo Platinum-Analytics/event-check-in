@@ -1,11 +1,5 @@
 {% extends "base.html" %}
 {% block content %}
-    <section class="bg-dark text-light mt-5">
-        <div class="container-sm">
-            <p class="h1 py-2">Event Check In</p>
-        </div>
-    </section>
-
     <section class="my-5">
         <div class="container">
             <p class="h1 my-3">Home</p>
@@ -15,9 +9,9 @@
                          class="img-fluid my-2">
                 </div>
                 <div class="col-lg d-flex flex-column">
-                    <div class="row align-items-stretch flex-grow-1">
+                    <div class="row flex-grow-1">
                         <div class="col-sm d-flex">
-                            <a class="btn btn-outline-dark flex-fill d-flex align-items-center justify-content-center my-2">
+                            <a href="{{ url_for("main.search") }}" class="btn btn-outline-dark flex-fill d-flex align-items-center justify-content-center my-2">
                                 <i class="bi bi-search me-3 me-sm-0 me-lg-3 fs-1"></i>
                                 <span class="d-inline d-sm-none d-lg-inline">Search</span>
                             </a>
@@ -30,7 +24,7 @@
                             </a>
                         </div>
                     </div>
-                    <div class="row align-items-stretch flex-grow-1">
+                    <div class="row flex-grow-1">
                         <div class="col-sm d-flex">
                             <a href="{{ url_for("main.upload") }}"
                                class="btn btn-outline-dark flex-fill d-flex align-items-center justify-content-center my-2">

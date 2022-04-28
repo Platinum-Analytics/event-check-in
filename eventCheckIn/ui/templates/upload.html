@@ -1,22 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
-    <section class="bg-dark text-light mt-5">
-        <div class="container-sm">
-            <p class="h1 py-2">Event Check In</p>
-        </div>
-    </section>
-
     <section class="my-5">
-    <div class="container-sm">
-        <h1 class="my-3">Upload</h1>
-        <form method="POST" enctype="multipart/form-data">
-            {{ form.hidden_tag() }}
-            <div class="mb-3 input-group">
-                {{ form.csvData(class="form-control", id="csv") }}
-                <input class="btn btn-primary" type="submit" value="Upload">
-            </div>
-            <div class="mb-3"></div>
-        </form>
-    </div>
+        <div class="container-sm">
+            <p class="h1 my-3">Upload</p>
+            <form method="POST" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+                <div class="input-group">
+                    {{ form.csvData(class="form-control") }}
+                    <input class="btn btn-outline-primary" type="submit" value="Upload">
+                </div>
+            </form>
+        </div>
     </section>
 {% endblock %}
