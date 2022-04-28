@@ -1,15 +1,15 @@
 from flask_login import UserMixin
+from datetime import time
 
 from .extensions import db, bc, serializer
 
 
 # Attendee database models
-
 class Attendee(db.Model):  # Abstract parent class
-
+    __tablename__ = "attendee"
     __abstract__ = True
 
-    _id = db.Column(db.INTEGER, primary_key=True)
+    id = db.Column(db.INTEGER, primary_key=True)
     ticket_num = db.Column(db.INTEGER, nullable=False)
     first_name = db.Column(db.VARCHAR(255))
     last_name = db.Column(db.VARCHAR(255))
@@ -31,6 +31,7 @@ class Student(Attendee):  # PHS Student
     has_guest = db.Column(db.BOOLEAN, nullable=False)
 
     guests = db.relationship("Guest", backref="host")
+    timeEntries = db.relationship("TimeEntryStudent", backref="student")
 
     def __init__(self, ticket_num: int, school_id: int, first_name: str, last_name: str, is_cash: bool, check_num: int,
                  has_guest: bool):
@@ -44,22 +45,48 @@ class Guest(Attendee):  # Non-PHS Student
 
     host_id = db.Column(db.INTEGER, db.ForeignKey("student.school_id"), nullable=False)
 
+    timeEntries = db.relationship("TimeEntryGuest", backref="guest")
+
     def __init__(self, ticket_num: int, host_id: int, first_name: str, last_name: str, is_cash: bool,
                  check_num: int):
         super().__init__(ticket_num, first_name, last_name, is_cash, check_num)
         self.host_id = host_id
 
 
-# Logins database model
+# Time entry database models
+class TimeEntryStudent(db.Model):
+    id = db.Column(db.INTEGER, primary_key=True)
+    time = db.Column(db.TIME, nullable=False)
+    check_in = db.Column(db.BOOLEAN, nullable=False)
+    student_id = db.Column(db.Integer, db.ForeignKey("student.id"), nullable=False)
 
+    def __init__(self, check_in: bool, attendee_id: int):
+        self.time = time()
+        self.check_in = check_in
+        self.attendee_id = attendee_id
+
+
+class TimeEntryGuest(db.Model):
+    id = db.Column(db.INTEGER, primary_key=True)
+    time = db.Column(db.TIME, nullable=False)
+    check_in = db.Column(db.BOOLEAN, nullable=False)
+    guest_id = db.Column(db.Integer, db.ForeignKey("guest.id"), nullable=False)
+
+    def __init__(self, check_in: bool, attendee_id: int):
+        self.time = time()
+        self.check_in = check_in
+        self.attendee_id = attendee_id
+
+
+# Logins database model
 class User_(UserMixin, db.Model):  # NOT User due to Postgresql constraints
-    _id = db.Column(db.INTEGER, primary_key=True)
+    id = db.Column(db.INTEGER, primary_key=True)
     session_token = db.Column(db.VARCHAR, nullable=False, unique=True)
     email = db.Column(db.VARCHAR(255), unique=True)
     password = db.Column(db.VARCHAR(255))
     verified = db.Column(db.Boolean, nullable=False)
 
-    def __init__(self, email, password, verified):
+    def __init__(self, email: str, password: str, verified: bool):
         self.email = email
         self.password = bc.generate_password_hash(password).decode("utf8")
         self.session_token = serializer.dumps([self.email, self.password])
