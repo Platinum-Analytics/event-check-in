@@ -1,5 +1,7 @@
 from flask_login import UserMixin
 from datetime import datetime as dt
+from sqlalchemy.sql import func
+
 from .extensions import db, bc, serializer
 
 
@@ -55,24 +57,22 @@ class Guest(Attendee):  # Non-PHS Student
 # Time entry database models
 class TimeEntryStudent(db.Model):
     id = db.Column(db.INTEGER, primary_key=True)
-    time = db.Column(db.DATETIME(timezone=True), nullable=False)
+    time = db.Column(db.DATETIME(timezone=True), default=func.now(), nullable=False)
     check_in = db.Column(db.BOOLEAN, nullable=False)
     student_id = db.Column(db.Integer, db.ForeignKey("student.id"), nullable=False)
 
     def __init__(self, check_in: bool, student_id: int):
-        self.time = dt.now()
         self.check_in = check_in
         self.student_id = student_id
 
 
 class TimeEntryGuest(db.Model):
     id = db.Column(db.INTEGER, primary_key=True)
-    time = db.Column(db.DATETIME(timezone=True), nullable=False)
+    time = db.Column(db.DATETIME(timezone=True), default=func.now(), nullable=False)
     check_in = db.Column(db.BOOLEAN, nullable=False)
     guest_id = db.Column(db.Integer, db.ForeignKey("guest.id"), nullable=False)
 
     def __init__(self, check_in: bool, guest_id: int):
-        self.time = dt.now()
         self.check_in = check_in
         self.guest_id = guest_id
 
