@@ -68,7 +68,7 @@ class TimeEntryStudent(db.Model):
 
 class TimeEntryGuest(db.Model):
     id = db.Column(db.INTEGER, primary_key=True)
-    time = db.Column(db.DATETIME(timezone=True), default=func.now(), nullable=False)
+    time = db.Column(db.DATETIME, default=func.now(), nullable=False)
     check_in = db.Column(db.BOOLEAN, nullable=False)
     guest_id = db.Column(db.Integer, db.ForeignKey("guest.id"), nullable=False)
 
