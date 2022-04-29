@@ -2,7 +2,7 @@ from flask import render_template, redirect, url_for, session, flash
 from flask_login import login_user, logout_user, login_required, fresh_login_required, confirm_login, current_user
 from flask_mail import Message
 
-from sqlalchemy import or_
+from sqlalchemy import or_, desc
 from itsdangerous import BadTimeSignature, SignatureExpired
 
 from .extensions import db, bc, timedSerializer, mail
@@ -53,10 +53,16 @@ def home():
 def search():
     form = Search()
     if not form.validate_on_submit():
-        if len(form.errors) != 0:
-            flash("Invalid input", "warn")
-        return render_template("search.html", form=form)
+        if "returnLog" in session and "search" in session:
+            form.query.data = session.get("search")
+            session.pop("returnLog")
+        else:
+            session.pop("search")
+            if len(form.errors) != 0:
+                flash("Invalid input", "warn")
+            return render_template("search.html", form=form)
 
+    session["search"] = form.query.data
     students = []
     guests = []
     try:
@@ -250,16 +256,18 @@ def verify(token):
 
 
 def logStudent(id_):
-    latest = TimeEntryStudent.query.filter_by(student_id=id_).order_by(TimeEntryStudent.time).first()
+    latest = TimeEntryStudent.query.filter_by(student_id=id_).order_by(desc(TimeEntryStudent.time)).first()
     db.session.add(TimeEntryStudent(not latest.check_in if latest else True, id_))
     db.session.commit()
 
+    session["returnLog"] = True
     return redirect(url_for("main.search"))
 
 
 def logGuest(id_):
-    latest = TimeEntryGuest.query.filter_by(guest_id=id_).order_by(TimeEntryGuest.time).first()
+    latest = TimeEntryGuest.query.filter_by(guest_id=id_).order_by(desc(TimeEntryGuest.time)).first()
     db.session.add(TimeEntryGuest(not latest.check_in if latest else True, id_))
     db.session.commit()
 
+    session["returnLog"] = True
     return redirect(url_for("main.search"))
