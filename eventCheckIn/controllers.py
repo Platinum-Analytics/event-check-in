@@ -7,7 +7,7 @@ from itsdangerous import BadTimeSignature, SignatureExpired
 
 from .extensions import db, bc, timedSerializer, mail
 from .forms import CSVUpload, UserLogin, UserRegister, AuthenticateUser, ChangePassword, Search
-from .models import Student, Guest, User_
+from .models import Student, Guest, User_, TimeEntryStudent, TimeEntryGuest
 from .scripts import checkString, checkInt, checkBool, checkCash
 
 
@@ -57,7 +57,7 @@ def search():
             flash("Invalid input", "warn")
         return render_template("search.html", form=form)
 
-    students =[]
+    students = []
     guests = []
     try:
         query = int(form.query.data)
@@ -74,7 +74,6 @@ def search():
         for i in students:
             for j in i.guests:
                 guests.append(j)
-        print(students, guests)
 
     return render_template("search.html", form=form, students=students, guests=guests)
 
@@ -248,3 +247,19 @@ def verify(token):
         ...  # Unauthorized, simply redirect to login page
     finally:
         return redirect(url_for("main.login"))
+
+
+def logStudent(id_):
+    latest = TimeEntryStudent.query.filter_by(student_id=id_).order_by(TimeEntryStudent.time).first()
+    db.session.add(TimeEntryStudent(not latest.check_in if latest else True, id_))
+    db.session.commit()
+
+    return redirect(url_for("main.search"))
+
+
+def logGuest(id_):
+    latest = TimeEntryGuest.query.filter_by(guest_id=id_).order_by(TimeEntryGuest.time).first()
+    db.session.add(TimeEntryGuest(not latest.check_in if latest else True, id_))
+    db.session.commit()
+
+    return redirect(url_for("main.search"))

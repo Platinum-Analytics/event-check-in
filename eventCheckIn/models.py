@@ -1,6 +1,5 @@
 from flask_login import UserMixin
-from datetime import time
-
+from datetime import datetime as dt
 from .extensions import db, bc, serializer
 
 
@@ -56,26 +55,26 @@ class Guest(Attendee):  # Non-PHS Student
 # Time entry database models
 class TimeEntryStudent(db.Model):
     id = db.Column(db.INTEGER, primary_key=True)
-    time = db.Column(db.TIME, nullable=False)
+    time = db.Column(db.DATETIME(timezone=True), nullable=False)
     check_in = db.Column(db.BOOLEAN, nullable=False)
     student_id = db.Column(db.Integer, db.ForeignKey("student.id"), nullable=False)
 
-    def __init__(self, check_in: bool, attendee_id: int):
-        self.time = time()
+    def __init__(self, check_in: bool, student_id: int):
+        self.time = dt.now()
         self.check_in = check_in
-        self.attendee_id = attendee_id
+        self.student_id = student_id
 
 
 class TimeEntryGuest(db.Model):
     id = db.Column(db.INTEGER, primary_key=True)
-    time = db.Column(db.TIME, nullable=False)
+    time = db.Column(db.DATETIME(timezone=True), nullable=False)
     check_in = db.Column(db.BOOLEAN, nullable=False)
     guest_id = db.Column(db.Integer, db.ForeignKey("guest.id"), nullable=False)
 
-    def __init__(self, check_in: bool, attendee_id: int):
-        self.time = time()
+    def __init__(self, check_in: bool, guest_id: int):
+        self.time = dt.now()
         self.check_in = check_in
-        self.attendee_id = attendee_id
+        self.guest_id = guest_id
 
 
 # Logins database model

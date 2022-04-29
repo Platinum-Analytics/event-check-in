@@ -85,7 +85,7 @@
                         <button class="btn btn-outline-secondary" data-bs-dismiss="modal">
                             Close
                         </button>
-                        <a type="button" class="btn btn-primary">Check In/Out</a>
+                        <a href="{{ url_for("action.logStudent", id_=i.id) }}" type="button" class="btn btn-primary">Check In/Out</a>
                     </div>
                 </div>
             </div>
@@ -110,7 +110,7 @@
                         <button class="btn btn-outline-secondary" data-bs-dismiss="modal">
                             Close
                         </button>
-                        <a type="button" class="btn btn-primary">Check In/Out</a>
+                        <a href="{{ url_for("action.logGuest", id_=j.id) }}" type="button" class="btn btn-primary">Check In/Out</a>
                     </div>
                 </div>
             </div>

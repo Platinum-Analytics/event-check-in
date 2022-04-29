@@ -18,5 +18,7 @@ main.add_url_rule("/search", "search", controllers.search, methods=["GET", "POST
 
 action.add_url_rule("/logout", "logout", controllers.logout)
 action.add_url_rule("/resetDB", "resetDB", controllers.resetDB)
+action.add_url_rule("/logStudent/<id_>", "logStudent", controllers.logStudent)
+action.add_url_rule("/logGuest/<id_>", "logGuest", controllers.logGuest)
 
 verify.add_url_rule("/<token>", "verify", controllers.verify)
