@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, session, flash
+from flask import render_template, redirect, url_for, session, flash, abort
 from flask_login import login_user, logout_user, login_required, fresh_login_required, confirm_login, current_user
 from flask_mail import Message
 
@@ -176,13 +176,18 @@ def upload():
 
 
 @login_required
-def attendees():
-    print("a")
+def attendees(page=1):
+    try:
+        page = int(page)
+    except ValueError:
+        abort(404)
+
+    chunkSize = 25
     students = Student.query.all()
-    print("b")
-    guests = Guest.query.all()
-    print("c")
-    return render_template("attendees.html", students=students, guests=guests)
+    listEnd = chunkSize * page
+    chunks = len(students) // chunkSize + 1
+    return render_template("attendees.html", students=students[listEnd - 25:listEnd], page=page,
+                           chunks=chunks)
 
 
 @fresh_login_required
