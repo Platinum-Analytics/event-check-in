@@ -2,7 +2,7 @@ from flask import render_template, redirect, url_for, session, flash
 from flask_login import login_user, logout_user, login_required, fresh_login_required, confirm_login, current_user
 from flask_mail import Message
 
-from sqlalchemy import or_, desc
+from sqlalchemy import or_
 from itsdangerous import BadTimeSignature, SignatureExpired
 
 from .extensions import db, bc, timedSerializer, mail
@@ -57,7 +57,8 @@ def search():
             form.query.data = session.get("search")
             session.pop("returnLog")
         else:
-            session.pop("search")
+            if "search" in session:
+                session.pop("search")
             if len(form.errors) != 0:
                 flash("Invalid input", "warn")
             return render_template("search.html", form=form)
@@ -176,8 +177,11 @@ def upload():
 
 @login_required
 def attendees():
+    print("a")
     students = Student.query.all()
+    print("b")
     guests = Guest.query.all()
+    print("c")
     return render_template("attendees.html", students=students, guests=guests)
 
 
@@ -223,8 +227,11 @@ def reauthenticate():
 
 @login_required
 def resetDB():
+    db.session.execute(TimeEntryStudent.__table__.delete())
+    db.session.execute(TimeEntryGuest.__table__.delete())
     db.session.execute(Guest.__table__.delete())
     db.session.execute(Student.__table__.delete())
+
     db.session.commit()
 
     flash("Database reset", "success")
@@ -256,8 +263,9 @@ def verify(token):
 
 
 def logStudent(id_):
-    latest = TimeEntryStudent.query.filter_by(student_id=id_).order_by(desc(TimeEntryStudent.time)).first()
-    db.session.add(TimeEntryStudent(not latest.check_in if latest else True, id_))
+    student = db.session.get(Student, id_)
+    student.checked_in = not student.checked_in
+    db.session.add(TimeEntryStudent(student.checked_in, id_))
     db.session.commit()
 
     session["returnLog"] = True
@@ -265,8 +273,9 @@ def logStudent(id_):
 
 
 def logGuest(id_):
-    latest = TimeEntryGuest.query.filter_by(guest_id=id_).order_by(desc(TimeEntryGuest.time)).first()
-    db.session.add(TimeEntryGuest(not latest.check_in if latest else True, id_))
+    guest = db.session.get(Guest, id_)
+    guest.checked_in = not guest.checked_in
+    db.session.add(TimeEntryGuest(guest.checked_in, id_))
     db.session.commit()
 
     session["returnLog"] = True

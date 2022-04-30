@@ -1,6 +1,6 @@
 from flask_login import UserMixin
-from psycopg2.extras import DateTimeTZRange
 from sqlalchemy.sql import func
+from sqlalchemy import Column, DateTime, Integer, Boolean, Text
 
 from .extensions import db, bc, serializer
 
@@ -10,12 +10,13 @@ class Attendee(db.Model):  # Abstract parent class
     __tablename__ = "attendee"
     __abstract__ = True
 
-    id = db.Column(db.INTEGER, primary_key=True)
-    ticket_num = db.Column(db.INTEGER, nullable=False)
-    first_name = db.Column(db.VARCHAR(255))
-    last_name = db.Column(db.VARCHAR(255))
-    is_cash = db.Column(db.BOOLEAN, nullable=False)
-    check_num = db.Column(db.INTEGER)
+    id = Column(Integer, primary_key=True)
+    ticket_num = Column(Integer, nullable=False)
+    first_name = Column(Text)
+    last_name = Column(Text)
+    is_cash = Column(Boolean, nullable=False)
+    check_num = Column(Integer)
+    checked_in = Column(Boolean)
 
     def __init__(self, ticket_num: int, first_name: str, last_name: str, is_cash: bool, check_num: int):
         self.ticket_num = ticket_num
@@ -23,13 +24,14 @@ class Attendee(db.Model):  # Abstract parent class
         self.last_name = last_name
         self.is_cash = is_cash
         self.check_num = check_num
+        self.checked_in = False
 
 
 class Student(Attendee):  # PHS Student
     __tablename__ = "student"
 
-    school_id = db.Column(db.INTEGER, nullable=False, unique=True)
-    has_guest = db.Column(db.BOOLEAN, nullable=False)
+    school_id = Column(Integer, nullable=False, unique=True)
+    has_guest = Column(Boolean, nullable=False)
 
     guests = db.relationship("Guest", backref="host")
     timeEntries = db.relationship("TimeEntryStudent", backref="student")
@@ -44,7 +46,7 @@ class Student(Attendee):  # PHS Student
 class Guest(Attendee):  # Non-PHS Student
     __tablename__ = "guest"
 
-    host_id = db.Column(db.INTEGER, db.ForeignKey("student.school_id"), nullable=False)
+    host_id = Column(Integer, db.ForeignKey("student.school_id"), nullable=False)
 
     timeEntries = db.relationship("TimeEntryGuest", backref="guest")
 
@@ -56,36 +58,34 @@ class Guest(Attendee):  # Non-PHS Student
 
 # Time entry database models
 class TimeEntryStudent(db.Model):
-    id = db.Column(db.INTEGER, primary_key=True)
-    time = db.Column(db.DATETIME(timezone=True), nullable=False)
-    check_in = db.Column(db.BOOLEAN, nullable=False)
-    student_id = db.Column(db.Integer, db.ForeignKey("student.id"), nullable=False)
+    id = Column(Integer, primary_key=True)
+    time = Column(DateTime(timezone=True), default=func.now(), nullable=False)
+    is_check_in = Column(Boolean, nullable=False)
+    student_id = Column(Integer, db.ForeignKey("student.id"), nullable=False)
 
     def __init__(self, check_in: bool, student_id: int):
-        self.time = DateTimeTZRange(func.now)
-        self.check_in = check_in
+        self.is_check_in = check_in
         self.student_id = student_id
 
 
 class TimeEntryGuest(db.Model):
-    id = db.Column(db.INTEGER, primary_key=True)
-    time = db.Column(db.DATETIME(timezone=True), nullable=False)
-    check_in = db.Column(db.BOOLEAN, nullable=False)
-    guest_id = db.Column(db.Integer, db.ForeignKey("guest.id"), nullable=False)
+    id = Column(Integer, primary_key=True)
+    time = Column(DateTime(timezone=True), default=func.now(), nullable=False)
+    is_check_in = Column(Boolean, nullable=False)
+    guest_id = Column(Integer, db.ForeignKey("guest.id"), nullable=False)
 
     def __init__(self, check_in: bool, guest_id: int):
-        self.time = DateTimeTZRange(func.now)
-        self.check_in = check_in
+        self.is_check_in = check_in
         self.guest_id = guest_id
 
 
 # Logins database model
 class User_(UserMixin, db.Model):  # NOT User due to Postgresql constraints
-    id = db.Column(db.INTEGER, primary_key=True)
-    session_token = db.Column(db.VARCHAR, nullable=False, unique=True)
-    email = db.Column(db.VARCHAR(255), unique=True)
-    password = db.Column(db.VARCHAR(255))
-    verified = db.Column(db.Boolean, nullable=False)
+    id = Column(Integer, primary_key=True)
+    session_token = Column(Text, nullable=False, unique=True)
+    email = Column(Text, unique=True)
+    password = Column(Text)
+    verified = Column(Boolean, nullable=False)
 
     def __init__(self, email: str, password: str, verified: bool):
         self.email = email

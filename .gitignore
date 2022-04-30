@@ -6,3 +6,4 @@ env
 .env
 *.sqlite3
 /flask_session/
+addUser.py

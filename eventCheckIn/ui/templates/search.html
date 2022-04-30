@@ -92,7 +92,7 @@
                                     <tr>
                                         <td>{{ k.time.strftime("%a, %b %e, %Y") }}</td>
                                         <td>{{ k.time.strftime("%r") }}</td>
-                                        <td>{{ "Check In" if k.check_in else "Check Out" }}</td>
+                                        <td>{{ "Check In" if k.is_check_in else "Check Out" }}</td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>
@@ -104,8 +104,7 @@
                         <button class="btn btn-outline-secondary" data-bs-dismiss="modal">
                             Close
                         </button>
-                        <a href="{{ url_for("action.logStudent", id_=i.id) }}" type="button" class="btn btn-primary">Check
-                            In/Out</a>
+                        <a href="{{ url_for("action.logStudent", id_=i.id) }}" type="button" class="btn btn-primary">Check {{ "Out" if i.checked_in else "In" }}</a>
                     </div>
                 </div>
             </div>
@@ -138,7 +137,7 @@
                                     <tr>
                                         <td>{{ k.time.strftime("%a, %b %e, %Y") }}</td>
                                         <td>{{ k.time.strftime("%r") }}</td>
-                                        <td>{{ "Check In" if k.check_in else "Check Out" }}</td>
+                                        <td>Check {{ "In" if k.is_check_in else "Out" }}</td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>
@@ -150,8 +149,8 @@
                         <button class="btn btn-outline-secondary" data-bs-dismiss="modal">
                             Close
                         </button>
-                        <a href="{{ url_for("action.logGuest", id_=j.id) }}" type="button" class="btn btn-primary">Check
-                            In/Out</a>
+                        <a href="{{ url_for("action.logGuest", id_=j.id) }}" type="button"
+                           class="btn btn-primary">Check {{ "Out" if j.checked_in else "In" }}</a>
                     </div>
                 </div>
             </div>
