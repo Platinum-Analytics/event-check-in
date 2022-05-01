@@ -190,8 +190,7 @@ def attendees():
     students = db.session.query(Student).order_by(order).all()
     listEnd = chunkSize * page
     chunks = len(students) // chunkSize + 1
-    return render_template("attendees.html", students=students[listEnd - chunkSize:listEnd], page=page,
-                           chunks=chunks)
+    return render_template("attendees.html", students=students[listEnd - chunkSize:listEnd], chunks=chunks)
 
 
 @fresh_login_required

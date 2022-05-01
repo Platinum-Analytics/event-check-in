@@ -1,4 +1,9 @@
 {% extends "base.html" %}
+
+{% block title %}
+    Search
+{% endblock %}
+
 {% block content %}
     <section class="my-5">
         <div class="container">
@@ -6,7 +11,7 @@
             <form method="POST">
                 {{ form.hidden_tag() }}
                 <div class="input-group">
-                    {{ form.query(class="form-control") }}
+                    {{ form.query(class="form-control", id="search") }}
                     <input class="btn btn-outline-primary" type="submit" value="Search">
                 </div>
             </form>
@@ -156,4 +161,6 @@
             </div>
         </div>
     {% endfor %}
+
+    <script src="{{ url_for("static", filename="js/search.js") }}"></script>
 {% endblock %}
