@@ -106,12 +106,12 @@ def register():
         flash("Passwords do not match", "danger")
         return render_template("register.html", form=form)
 
-    user = User_(form.email.data, form.password.data, False)
+    user = User_(form.email.data.lower(), form.password.data, False)
     db.session.add(user)
     db.session.commit()
 
     confirm_email = Message("Event Check In Email Confirmation",
-                            sender=("Platinum Analytics", "SMCS2024.PlatinumAnalytics.com"),
+                            sender="Event Check In",
                             recipients=[form.email.data])
 
     confirm_email.html = render_template("verify/email.html", token=timedSerializer.dumps(form.email.data))
