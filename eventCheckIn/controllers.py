@@ -2,7 +2,7 @@ from flask import render_template, redirect, url_for, session, flash, request
 from flask_login import login_user, logout_user, login_required, fresh_login_required, confirm_login, current_user
 from flask_mail import Message
 
-from sqlalchemy import or_
+from sqlalchemy import or_, desc
 from itsdangerous import BadTimeSignature, SignatureExpired
 
 from .extensions import db, bc, timedSerializer, mail
@@ -180,11 +180,14 @@ def attendees():
     all_filters = {"first_name": Student.first_name, "last_name": Student.last_name, "ticket_num": Student.ticket_num,
                    "school_id": Student.school_id}
 
-    page = request.args.get('page', 1)
-    order = request.args.get('filter', "ticket_num")
+    page = request.args.get("page", 1)
+    order = request.args.get("filter", "ticket_num")
+    is_desc = request.args.get("desc", False)
 
     page = int(page)
     order = all_filters.get(order)
+    if is_desc == "True":
+        order = desc(order)
 
     chunkSize = 25
     students = db.session.query(Student).order_by(order).all()
@@ -219,7 +222,7 @@ def reauthenticate():
         return render_template("reauthenticate.html", form=form)
 
     if not bc.check_password_hash(current_user.password, form.password.data):
-        flash("Incorrect password!", "danger")
+        flash("Incorrect password", "danger")
         return render_template("reauthenticate.html", form=form)
 
     confirm_login()

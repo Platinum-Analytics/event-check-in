@@ -7,6 +7,7 @@
 {% block content %}
     {% set filter = request.args.get("filter", "ticket_num") %}
     {% set page = request.args.get("page", 1)|int %}
+    {% set desc = request.args.get("desc", False) == "True" %}
 
     <section class="my-5">
         <div class="container">
@@ -16,28 +17,28 @@
                 <thead>
                 <tr>
                     <th>
-                        <a href="{{ url_for("main.attendees", filter="ticket_num") }}"
+                        <a href="{{ url_for("main.attendees", filter="ticket_num", desc=filter == "ticket_num" and not desc) }}"
                            class="btn btn-outline-dark border-0 me-2 px-1 py-0" id="ticket_num">
                             <i class="bi bi-filter"></i>
                         </a>
                         Ticket #
                     </th>
                     <th>
-                        <a href="{{ url_for("main.attendees", filter="school_id") }}"
+                        <a href="{{ url_for("main.attendees", filter="school_id", desc=filter == "school_id" and not desc) }}"
                            class="btn btn-outline-dark border-0 me-2 px-1 py-0" id="school_id">
                             <i class="bi bi-filter"></i>
                         </a>
                         Student ID
                     </th>
                     <th>
-                        <a href="{{ url_for("main.attendees", filter="first_name") }}"
+                        <a href="{{ url_for("main.attendees", filter="first_name", desc=filter == "first_name" and not desc) }}"
                            class="btn btn-outline-dark border-0 me-2 px-1 py-0" id="first_name">
                             <i class="bi bi-filter"></i>
                         </a>
                         First Name
                     </th>
                     <th>
-                        <a href="{{ url_for("main.attendees", filter="last_name") }}"
+                        <a href="{{ url_for("main.attendees", filter="last_name", desc=filter == "last_name" and not desc) }}"
                            class="btn btn-outline-dark border-0 me-2 px-1 py-0" id="last_name">
                             <i class="bi bi-filter"></i>
                         </a>
@@ -71,15 +72,15 @@
         <div class="container">
             <ul class="pagination justify-content-center">
                 <li class="page-item" id="previous"><a class="page-link"
-                                                       href="{{ url_for("main.attendees", page=((page - 2) % chunks) + 1, filter=filter) }}">Previous</a>
+                                                       href="{{ url_for("main.attendees", page=((page - 2) % chunks) + 1, filter=filter, desc=desc) }}">Previous</a>
                 </li>
                 {% for i in range(1, chunks + 1) %}
                     <li class="page-item" id="page-{{ i }}"><a class="page-link"
-                                                               href="{{ url_for("main.attendees", page=i, filter=filter) }}">{{ i }}</a>
+                                                               href="{{ url_for("main.attendees", page=i, filter=filter, desc=desc) }}">{{ i }}</a>
                     </li>
                 {% endfor %}
                 <li class="page-item" id="next"><a class="page-link"
-                                                   href="{{ url_for("main.attendees", page=page % chunks + 1, filter=filter) }}">Next</a>
+                                                   href="{{ url_for("main.attendees", page=page % chunks + 1, filter=filter, desc=desc) }}">Next</a>
                 </li>
 
             </ul>
