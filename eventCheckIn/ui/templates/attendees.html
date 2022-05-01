@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
+    {% set filter = request.args.get("filter", "ticket_num") %}
+
     <section class="my-5">
         <div class="container">
             <p class="h1 my-3">All Attendees</p>
@@ -7,10 +9,34 @@
             <table class="table table-hover align-middle">
                 <thead>
                 <tr>
-                    <th>Ticket #</th>
-                    <th>Student ID</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
+                    <th>
+                        <a href="{{ url_for("main.attendees", filter="ticket_num") }}"
+                           class="btn btn-outline-dark border-0 me-2 px-1 py-0" id="ticket_num">
+                            <i class="bi bi-filter"></i>
+                        </a>
+                        Ticket #
+                    </th>
+                    <th>
+                        <a href="{{ url_for("main.attendees", filter="school_id") }}"
+                           class="btn btn-outline-dark border-0 me-2 px-1 py-0" id="school_id">
+                            <i class="bi bi-filter"></i>
+                        </a>
+                        Student ID
+                    </th>
+                    <th>
+                        <a href="{{ url_for("main.attendees", filter="first_name") }}"
+                           class="btn btn-outline-dark border-0 me-2 px-1 py-0" id="first_name">
+                            <i class="bi bi-filter"></i>
+                        </a>
+                        First Name
+                    </th>
+                    <th>
+                        <a href="{{ url_for("main.attendees", filter="last_name") }}"
+                           class="btn btn-outline-dark border-0 me-2 px-1 py-0" id="last_name">
+                            <i class="bi bi-filter"></i>
+                        </a>
+                        Last Name
+                    </th>
                     <th></th>
                 </tr>
                 </thead>
@@ -39,15 +65,15 @@
         <div class="container">
             <ul class="pagination justify-content-center">
                 <li class="page-item" id="previous"><a class="page-link"
-                                                       href="{{ url_for("main.attendees", page=page-1) }}">Previous</a>
+                                                       href="{{ url_for("main.attendees", page=page-1, filter=filter) }}">Previous</a>
                 </li>
                 {% for i in range(1, chunks + 1) %}
                     <li class="page-item" id="page-{{ i }}"><a class="page-link"
-                                                               href="{{ url_for("main.attendees", page=i) }}">{{ i }}</a>
+                                                               href="{{ url_for("main.attendees", page=i, filter=filter) }}">{{ i }}</a>
                     </li>
                 {% endfor %}
                 <li class="page-item" id="next"><a class="page-link"
-                                                   href="{{ url_for("main.attendees", page=page+1) }}">Next</a>
+                                                   href="{{ url_for("main.attendees", page=page+1, filter=filter) }}">Next</a>
                 </li>
 
             </ul>
@@ -116,7 +142,7 @@
                                                 <th>Ticket #</th>
                                                 <th>First Name</th>
                                                 <th>Last Name</th>
-                                                <th>Payment Type</th>
+                                                <th>{{ "Payment Type" if i.is_cash else "Check #" }}</th>
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -261,6 +287,9 @@
 
     <script>
         document.getElementById("page-{{ page }}").classList.add("active");
+        let filter = document.getElementById("{{ filter }}");
+        filter.classList.remove("btn-outline-dark")
+        filter.classList.add("btn-dark")
 
         if ({{ page }} === 1) { document.getElementById("previous").classList.add("disabled"); }
         else if ({{ page }} === {{ chunks }}) { document.getElementById("next").classList.add("disabled"); }

@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, session, flash, abort
+from flask import render_template, redirect, url_for, session, flash, request
 from flask_login import login_user, logout_user, login_required, fresh_login_required, confirm_login, current_user
 from flask_mail import Message
 
@@ -176,17 +176,21 @@ def upload():
 
 
 @login_required
-def attendees(page=1):
-    try:
-        page = int(page)
-    except ValueError:
-        abort(404)
+def attendees():
+    all_filters = {"first_name": Student.first_name, "last_name": Student.last_name, "ticket_num": Student.ticket_num,
+                   "school_id": Student.school_id}
+
+    page = request.args.get('page', 1)
+    order = request.args.get('filter', "ticket_num")
+
+    page = int(page)
+    order = all_filters.get(order)
 
     chunkSize = 25
-    students = Student.query.all()
+    students = db.session.query(Student).order_by(order).all()
     listEnd = chunkSize * page
     chunks = len(students) // chunkSize + 1
-    return render_template("attendees.html", students=students[listEnd - 25:listEnd], page=page,
+    return render_template("attendees.html", students=students[listEnd - chunkSize:listEnd], page=page,
                            chunks=chunks)
 
 
