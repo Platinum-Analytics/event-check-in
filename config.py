@@ -26,7 +26,7 @@ class Config(object):
     MAIL_PORT = 587
     MAIL_USE_TLS = True
     MAIL_USE_SSL = False
-    MAIL_USERNAME = "SMCS2024.PlatinumAnalytics@gmail.com"
+    MAIL_USERNAME = "EventCheckIn.Confirmation@gmail.com"
     MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
-    MAIL_DEFAULT_SENDER = "Platinum Analytics"
+    MAIL_DEFAULT_SENDER = "Event Check In"
     MAIL_MAX_EMAILS = 5
