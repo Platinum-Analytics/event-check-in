@@ -6,7 +6,7 @@ from sqlalchemy import or_, desc
 from itsdangerous import BadTimeSignature, SignatureExpired
 
 from .extensions import db, bc, timedSerializer, mail
-from .forms import CSVUpload, UserLogin, UserRegister, AuthenticateUser, ChangePassword, Search
+from .forms import CSVUpload, UserLogin, UserRegister, ConfirmPassword, ChangePassword, Search
 from .models import Student, Guest, User_, TimeEntryStudent, TimeEntryGuest
 from .scripts import checkString, checkInt, checkBool, checkCash
 
@@ -20,18 +20,18 @@ def login():
     if not form.validate_on_submit():
         if len(form.errors) != 0:
             flash("Invalid email/password", "warn")
-        return render_template("login.html", form=form)
+        return render_template("main/login.html", form=form)
 
-    user = User_.query.filter_by(email=form.email.data).first()
+    user = User_.query.filter_by(email=form.email.data.lower()).first()
 
     if not user:
         flash("User does not exist", "info")
-        return render_template("login.html", form=form)
+        return render_template("main/login.html", form=form)
     elif not user.verified:
         flash("Please confirm your email", "warn")
     elif not bc.check_password_hash(user.password, form.password.data):
         flash("Incorrect password!", "danger")
-        return render_template("login.html", form=form)
+        return render_template("main/login.html", form=form)
 
     login_user(user, remember=form.remember.data)
     flash("Logged in successfully!", "success")
@@ -46,7 +46,7 @@ def login():
 
 @login_required
 def home():
-    return render_template("home.html")
+    return render_template("main/home.html")
 
 
 @login_required
@@ -61,7 +61,7 @@ def search():
                 session.pop("search")
             if len(form.errors) != 0:
                 flash("Invalid input", "warn")
-            return render_template("search.html", form=form)
+            return render_template("main/search.html", form=form)
 
     session["search"] = form.query.data
     students = []
@@ -82,7 +82,7 @@ def search():
             for j in i.guests:
                 guests.append(j)
 
-    return render_template("search.html", form=form, students=students, guests=guests)
+    return render_template("main/search.html", form=form, students=students, guests=guests)
 
 
 @fresh_login_required
@@ -91,20 +91,20 @@ def register():
     if not form.validate_on_submit():
         if len(form.errors) != 0:
             flash("Invalid email/password", "warn")
-        return render_template("register.html", form=form)
+        return render_template("main/register.html", form=form)
 
     user_search = User_.query.filter_by(email=form.email.data).first()
     if user_search:
         if user_search.verified:
             flash("Email already registered", "info")
-            return render_template("register.html", form=form)
+            return render_template("main/register.html", form=form)
         else:
             db.session.delete(user_search)
             db.session.commit()
 
     if form.password.data != form.confirmPassword.data:
         flash("Passwords do not match", "danger")
-        return render_template("register.html", form=form)
+        return render_template("main/register.html", form=form)
 
     user = User_(form.email.data.lower(), form.password.data, False)
     db.session.add(user)
@@ -114,7 +114,8 @@ def register():
                             sender="Event Check In",
                             recipients=[form.email.data])
 
-    confirm_email.html = render_template("verify/email.html", token=timedSerializer.dumps(form.email.data))
+    confirm_email.html = render_template("verify/email.html",
+                                         token=timedSerializer.dumps(form.email.data, salt="emailConfirm"))
     mail.send(confirm_email)
 
     flash("Email verification sent, please confirm your email", "success")
@@ -127,7 +128,7 @@ def upload():
     if not form.validate_on_submit():
         if len(form.errors) != 0:
             flash("Invalid File Type", "danger")
-        return render_template("upload.html", form=form)
+        return render_template("main/upload.html", form=form)
 
     # Read and parse CSV Data
     rawData = form.csvData.data.read().decode().split('\n')
@@ -136,7 +137,7 @@ def upload():
     if parsedData[0] != ["Ticket", "ID", "LAST", "MI", "FIRST", "GR", "Payment Method", "Guest YN", "Guest Ticket "
                                                                                                     "Number"]:
         flash("Invalid CSV", "danger")
-        return render_template("upload.html", form=form)
+        return render_template("main/upload.html", form=form)
 
     del parsedData[0]
 
@@ -172,7 +173,7 @@ def upload():
 
     db.session.commit()
     flash("File Successfully Uploaded!", "success")
-    return render_template("upload.html", form=form)
+    return render_template("main/upload.html", form=form)
 
 
 @login_required
@@ -193,7 +194,7 @@ def attendees():
     students = db.session.query(Student).order_by(order).all()
     listEnd = chunkSize * page
     chunks = len(students) // chunkSize + 1
-    return render_template("attendees.html", students=students[listEnd - chunkSize:listEnd], chunks=chunks)
+    return render_template("main/attendees.html", students=students[listEnd - chunkSize:listEnd], chunks=chunks)
 
 
 @fresh_login_required
@@ -210,20 +211,20 @@ def settings():
         db.session.commit()
         return redirect(url_for("action.logout"))
 
-    return render_template("settings.html", form=form)
+    return render_template("main/settings.html", form=form)
 
 
 @login_required
 def reauthenticate():
-    form = AuthenticateUser()
+    form = ConfirmPassword()
     if not form.validate_on_submit():
         if len(form.errors) != 0:
             flash("Invalid password", "warn")
-        return render_template("reauthenticate.html", form=form)
+        return render_template("password/reauthenticate.html", form=form)
 
     if not bc.check_password_hash(current_user.password, form.password.data):
         flash("Incorrect password", "danger")
-        return render_template("reauthenticate.html", form=form)
+        return render_template("password/reauthenticate.html", form=form)
 
     confirm_login()
     flash("Password confirmed", "success")
@@ -233,7 +234,7 @@ def reauthenticate():
         if next_val.split("/")[1] != "action":
             return redirect(next_val)
 
-    return render_template("home.html")
+    return render_template("main/home.html")
 
 
 @login_required
@@ -256,23 +257,15 @@ def logout():
     return redirect(url_for("main.login"))
 
 
-def verify(token):
-    try:
-        email = timedSerializer.loads(token, max_age=3600)
-
-        user = User_.query.filter_by(email=email).first()
-        user.verified = True
-        db.session.commit()
-
-        flash("User successfully registered", "success")
-    except SignatureExpired:
-        flash("Verification expired, please re-register", "danger")
-    except BadTimeSignature:
-        ...  # Unauthorized, simply redirect to login page
-    finally:
-        return redirect(url_for("main.login"))
+def forgotPass():
+    ...
 
 
+def resetPass():
+    ...
+
+
+@login_required
 def logStudent(id_):
     student = db.session.get(Student, id_)
     student.checked_in = not student.checked_in
@@ -283,6 +276,7 @@ def logStudent(id_):
     return redirect(url_for("main.search"))
 
 
+@login_required
 def logGuest(id_):
     guest = db.session.get(Guest, id_)
     guest.checked_in = not guest.checked_in
@@ -291,3 +285,20 @@ def logGuest(id_):
 
     session["returnLog"] = True
     return redirect(url_for("main.search"))
+
+
+def verify(token):
+    try:
+        email = timedSerializer.loads(token, salt="emailConfirm", max_age=3600)
+
+        user = User_.query.filter_by(email=email.lower()).first()
+        user.verified = True
+        db.session.commit()
+
+        flash("User successfully registered", "success")
+    except SignatureExpired:
+        flash("Verification expired, please re-register", "danger")
+    except BadTimeSignature:
+        ...  # Unauthorized, simply redirect to login page
+    finally:
+        return redirect(url_for("main.login"))

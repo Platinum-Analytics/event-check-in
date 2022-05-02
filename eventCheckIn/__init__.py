@@ -1,7 +1,7 @@
 from flask import Flask
 
 from .extensions import csrf, db, lm, bc, session, mail
-from .routes import main, action, verify
+from .routes import main, action, password, verify
 
 
 def create_app():
@@ -17,16 +17,19 @@ def create_app():
     app.config["SESSION_SQLALCHEMY"] = db  # Requires db to be initialized
     session.init_app(app)  # Requires SESSION_SQLALCHEMY to be set
 
+    # flask-login defaults
     lm.login_view = 'main.login'
     lm.login_message = "Please Log In"
     lm.login_message_category = "info"
 
-    lm.refresh_view = "main.reauthenticate"
+    lm.refresh_view = "password.reauthenticate"
     lm.needs_refresh_message = "Please confirm your password"
     lm.needs_refresh_message_category = "info"
 
+    # Blueprint registration
     app.register_blueprint(main)
     app.register_blueprint(action)
+    app.register_blueprint(password)
     app.register_blueprint(verify)
 
     with app.app_context():

@@ -26,7 +26,12 @@ class ChangePassword(FlaskForm):
     confirmNewPassword = PasswordField("Confirm New Password", validators=[InputRequired(), Length(min=8, max=80)])
 
 
-class AuthenticateUser(FlaskForm):
+class ForgotPassword(FlaskForm):
+    newPassword = PasswordField("New Password", validators=[InputRequired(), Length(min=8, max=80)])
+    confirmNewPassword = PasswordField("Confirm New Password", validators=[InputRequired(), Length(min=8, max=80)])
+
+
+class ConfirmPassword(FlaskForm):
     password = PasswordField("Password", validators=[InputRequired()])
 
 
