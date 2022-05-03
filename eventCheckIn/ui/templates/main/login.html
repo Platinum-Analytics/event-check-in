@@ -17,7 +17,7 @@
                 <div class="mb-3 form-group">
                     {{ form.password.label(class="form-label") }}
                     {{ form.password(class="form-control") }}
-                    <small class="form-text text-muted"><a href="{{ url_for("main.home") }}" class="text-decoration-none">Forgot Password</a></small>
+                    <small class="form-text text-muted"><a href="{{ url_for("password.forgotPass") }}" class="text-decoration-none">Forgot Password</a></small>
                 </div>
                 <div class="mb-3 form-group">
                     {{ form.remember.label(class="form-check-label") }}

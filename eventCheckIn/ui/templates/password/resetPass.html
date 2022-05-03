@@ -1,10 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-</body>
-</html>
+{% block title %}
+    Reset Password
+{% endblock %}
+
+{% block content %}
+    <section class="my-5">
+        <div class="container">
+            <p class="h1 my-3">Reset Password</p>
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                <div class="mb-3">
+                    {{ form.newPassword.label(class="form-label") }}
+                    {{ form.newPassword(class="form-control") }}
+                </div>
+                <div class="mb-3">
+                    {{ form.confirmNewPassword.label(class="form-label") }}
+                    {{ form.confirmNewPassword(class="form-control") }}
+                </div>
+                <div>
+                    <button class="btn btn-outline-primary" type="submit">Send Email</button>
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock %}

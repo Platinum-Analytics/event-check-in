@@ -5,7 +5,7 @@ from . import controllers
 main = Blueprint("main", __name__)
 action = Blueprint("action", __name__, url_prefix="/action")
 password = Blueprint("password", __name__, url_prefix="/password")
-verify = Blueprint("verify", __name__, url_prefix="/verify")
+verify = Blueprint("email", __name__, url_prefix="/email")
 
 main.add_url_rule("/", "index", controllers.index)
 main.add_url_rule("/login", "login", controllers.login, methods=["GET", "POST"])
@@ -23,6 +23,6 @@ action.add_url_rule("/logGuest/<id_>", "logGuest", controllers.logGuest)
 
 password.add_url_rule("/reauthenticate", "reauthenticate", controllers.reauthenticate, methods=["GET", "POST"])
 password.add_url_rule("/forgotPass", "forgotPass", controllers.forgotPass, methods=["GET", "POST"])
-password.add_url_rule("/resetPass", "resetPass", controllers.resetPass, methods=["GET", "POST"])
+password.add_url_rule("/resetPass/<token>", "resetPass", controllers.resetPass, methods=["GET", "POST"])
 
-verify.add_url_rule("/<token>", "verify", controllers.verify)
+verify.add_url_rule("/<token>", "email", controllers.email)

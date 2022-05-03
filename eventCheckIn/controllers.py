@@ -6,7 +6,8 @@ from sqlalchemy import or_, desc
 from itsdangerous import BadTimeSignature, SignatureExpired
 
 from .extensions import db, bc, timedSerializer, mail
-from .forms import CSVUpload, UserLogin, UserRegister, ConfirmPassword, ChangePassword, Search
+from .forms import CSVUpload, UserLogin, UserRegister, ConfirmPassword, ChangePassword, Search, ForgotPassword, \
+    ResetPassword
 from .models import Student, Guest, User_, TimeEntryStudent, TimeEntryGuest
 from .scripts import checkString, checkInt, checkBool, checkCash
 
@@ -22,13 +23,14 @@ def login():
             flash("Invalid email/password", "warn")
         return render_template("main/login.html", form=form)
 
-    user = User_.query.filter_by(email=form.email.data.lower()).first()
+    user = db.session.query(User_).filter_by(email=form.email.data.lower()).first()
 
     if not user:
         flash("User does not exist", "info")
         return render_template("main/login.html", form=form)
     elif not user.verified:
         flash("Please confirm your email", "warn")
+        return render_template("main/login.html", form=form)
     elif not bc.check_password_hash(user.password, form.password.data):
         flash("Incorrect password!", "danger")
         return render_template("main/login.html", form=form)
@@ -114,8 +116,9 @@ def register():
                             sender="Event Check In",
                             recipients=[form.email.data])
 
-    confirm_email.html = render_template("verify/email.html",
-                                         token=timedSerializer.dumps(form.email.data, salt="emailConfirm"))
+    confirm_email.html = render_template("email/confirmEmail.html",
+                                         token=timedSerializer.dumps(form.email.data,
+                                                                     salt="emailConfirm"))
     mail.send(confirm_email)
 
     flash("Email verification sent, please confirm your email", "success")
@@ -258,11 +261,59 @@ def logout():
 
 
 def forgotPass():
-    ...
+    form = ForgotPassword()
+    if not form.validate_on_submit():
+        if len(form.errors) != 0:
+            flash("Invalid Email", "warn")
+        return render_template("password/forgotPass.html", form=form)
+
+    user = db.session.query(User_).filter_by(email=form.email.data.lower()).first()
+
+    if not user:
+        flash("User does not exist", "info")
+        return render_template("password/forgotPass.html", form=form)
+    elif not user.verified:
+        flash("User not verified;  Please re-register", "warn")
+
+    reset_email = Message("Event Check In Password Reset",
+                          sender="Event Check In",
+                          recipients=[form.email.data])
+
+    reset_email.html = render_template("email/resetEmail.html",
+                                       token=timedSerializer.dumps(form.email.data,
+                                                                   salt="resetPass"))
+
+    mail.send(reset_email)
+
+    flash("Password reset form sent, please check your email", "success")
+    return redirect(url_for("main.login"))
 
 
-def resetPass():
-    ...
+def resetPass(token):
+    try:
+        token_email = timedSerializer.loads(token, salt="resetPass", max_age=3600)
+    except SignatureExpired:
+        flash("Verification expired, please re-register", "danger")
+        return redirect(url_for("main.login"))
+    except BadTimeSignature:
+        return redirect(url_for("main.login"))  # Unauthorized, simply redirect to login page
+
+    form = ResetPassword()
+    if not form.validate_on_submit():
+        if len(form.errors) != 0:
+            flash("Error", "warn")
+        return render_template("password/resetPass.html", form=form, token=token)
+
+    if form.newPassword.data != form.confirmNewPassword.data:
+        flash("Passwords do not match", "danger")
+        return render_template("password/resetPass.html", form=form, token=token)
+
+    user = db.session.query(User_).filter_by(email=token_email.lower()).first()
+    user.changePassword(form.newPassword.data)
+    db.session.commit()
+
+    flash("Password successfully reset", "success")
+    return redirect(url_for("main.login"))  # Unauthorized, simply redirect to login page
 
 
 @login_required
@@ -287,11 +338,11 @@ def logGuest(id_):
     return redirect(url_for("main.search"))
 
 
-def verify(token):
+def email(token):
     try:
-        email = timedSerializer.loads(token, salt="emailConfirm", max_age=3600)
+        token_email = timedSerializer.loads(token, salt="emailConfirm", max_age=3600)
 
-        user = User_.query.filter_by(email=email.lower()).first()
+        user = User_.query.filter_by(email=token_email.lower()).first()
         user.verified = True
         db.session.commit()
 

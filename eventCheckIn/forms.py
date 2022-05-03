@@ -27,6 +27,10 @@ class ChangePassword(FlaskForm):
 
 
 class ForgotPassword(FlaskForm):
+    email = EmailField("Email", validators=[InputRequired()])
+
+
+class ResetPassword(FlaskForm):
     newPassword = PasswordField("New Password", validators=[InputRequired(), Length(min=8, max=80)])
     confirmNewPassword = PasswordField("Confirm New Password", validators=[InputRequired(), Length(min=8, max=80)])
 

@@ -1,10 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-</body>
-</html>
+{% block title %}
+    Forgot Password
+{% endblock %}
+
+{% block content %}
+    <section class="my-5">
+        <div class="container">
+            <p class="h1 my-3">Forgot Password</p>
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                <div class="mb-3">
+                    {{ form.email.label(class="form-label") }}
+                    {{ form.email(class="form-control") }}
+                    <small class="form-label text-muted">A password reset form will be sent to the email associated with your account</small>
+                </div>
+                <div>
+                    <button class="btn btn-outline-primary" type="submit">Send Email</button>
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock %}
