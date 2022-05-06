@@ -29,6 +29,7 @@
                         <th>Student ID</th>
                         <th>First Name</th>
                         <th>Last Name</th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -38,6 +39,13 @@
                             <td>{{ i.school_id }}</td>
                             <td>{{ i.first_name }}</td>
                             <td>{{ i.last_name }}</td>
+                            {% if i.checked_in %}
+                                <td>
+                                    <i class="bi bi-check2"></i>
+                                </td>
+                            {% else %}
+                                <td></td>
+                            {% endif %}
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -56,6 +64,7 @@
                         <th>Ticket #</th>
                         <th>First Name</th>
                         <th>Last Name</th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -64,6 +73,13 @@
                             <td>{{ j.ticket_num }}</td>
                             <td>{{ j.first_name }}</td>
                             <td>{{ j.last_name }}</td>
+                            {% if j.checked_in %}
+                                <td>
+                                    <i class="bi bi-check2"></i>
+                                </td>
+                            {% else %}
+                                <td></td>
+                            {% endif %}
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -79,6 +95,9 @@
                     <div class="modal-header">
                         <div class="h5 modal-title">
                             {{ i.last_name }}, {{ i.first_name }}
+                            {% if i.checked_in %}
+                                <i class="bi bi-check2"></i>
+                            {% endif %}
                         </div>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
@@ -123,6 +142,9 @@
                     <div class="modal-header">
                         <div class="h5 modal-title">
                             {{ j.last_name }}, {{ j.first_name }}
+                            {% if j.checked_in %}
+                                <i class="bi bi-check2"></i>
+                            {% endif %}
                         </div>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
