@@ -7,12 +7,13 @@
 {% block content %}
     {% set filter = request.args.get("filter", "ticket_num") %}
     {% set page = request.args.get("page", 1)|int %}
-    {% set desc = request.args.get("desc", False) == "True" %}
+    {% set desc = request.args.get("desc") == "True" %}
+    {% set guests = request.args.get("guests") == "True" %}
 
-    {% if is_students %}
-        {% include "main/implements/students.html" %}
-    {% else %}
+    {% if guests %}
         {% include "main/implements/guests.html" %}
+    {% else %}
+        {% include "main/implements/students.html" %}
     {% endif %}
 {% endblock %}
 

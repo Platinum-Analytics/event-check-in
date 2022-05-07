@@ -1,13 +1,16 @@
 {# Table #}
 <section class="my-5">
     <div class="container">
-        <p class="h1 my-3">All Students</p>
+        <div class="d-flex justify-content-between align-items-center">
+                <p class="h1 my-3">All Students</p>
+                <a href="{{ url_for("main.attendees", guests=true) }}" class="btn btn-outline-primary">Guests</a>
+        </div>
 
         <table class="table table-hover align-middle">
             <thead>
             <tr>
                 <th>
-                    <a href="{{ url_for("main.attendees", filter="ticket_num", desc=filter == "ticket_num" and not desc, is_students=is_students) }}"
+                    <a href="{{ url_for("main.attendees", filter="ticket_num", desc=filter == "ticket_num" and not desc, guests=guests) }}"
                        class="btn btn-outline-dark border-0 me-2 px-1 py-0" id="ticket_num">
                         <i class="bi bi-filter"></i>
                     </a>
@@ -15,7 +18,7 @@
                     <span class="d-none d-sm-inline">#</span>
                 </th>
                 <th>
-                    <a href="{{ url_for("main.attendees", filter="school_id", desc=filter == "school_id" and not desc, is_students=is_students) }}"
+                    <a href="{{ url_for("main.attendees", filter="school_id", desc=filter == "school_id" and not desc, guests=guests) }}"
                        class="btn btn-outline-dark border-0 me-2 px-1 py-0" id="school_id">
                         <i class="bi bi-filter"></i>
                     </a>
@@ -23,7 +26,7 @@
                     <span class="d-none d-sm-inline">ID</span>
                 </th>
                 <th>
-                    <a href="{{ url_for("main.attendees", filter="first_name", desc=filter == "first_name" and not desc, is_students=is_students) }}"
+                    <a href="{{ url_for("main.attendees", filter="first_name", desc=filter == "first_name" and not desc, guests=guests) }}"
                        class="btn btn-outline-dark border-0 me-2 px-1 py-0" id="first_name">
                         <i class="bi bi-filter"></i>
                     </a>
@@ -31,7 +34,7 @@
                     <span class="d-none d-md-inline"> Name</span>
                 </th>
                 <th>
-                    <a href="{{ url_for("main.attendees", filter="last_name", desc=filter == "last_name" and not desc, is_students=is_students) }}"
+                    <a href="{{ url_for("main.attendees", filter="last_name", desc=filter == "last_name" and not desc, guests=guests) }}"
                        class="btn btn-outline-dark border-0 me-2 px-1 py-0" id="last_name">
                         <i class="bi bi-filter"></i>
                     </a>
@@ -76,18 +79,18 @@
     <div class="container">
         <ul class="pagination justify-content-center">
             <li class="page-item" id="previous"><a class="page-link"
-                                                   href="{{ url_for("main.attendees", page=((page - 2) % chunks) + 1, filter=filter, desc=desc, is_students=is_students) }}"
+                                                   href="{{ url_for("main.attendees", page=((page - 2) % chunks) + 1, filter=filter, desc=desc, guests=guests) }}"
                                                    aria-label="Previous">
                 <span aria-hidden="true">&laquo;</span>
             </a>
             </li>
             {% for i in range(1, chunks + 1) %}
                 <li class="page-item" id="page-{{ i }}"><a class="page-link"
-                                                           href="{{ url_for("main.attendees", page=i, filter=filter, desc=desc, is_students=is_students) }}">{{ i }}</a>
+                                                           href="{{ url_for("main.attendees", page=i, filter=filter, desc=desc, guests=guests) }}">{{ i }}</a>
                 </li>
             {% endfor %}
             <li class="page-item" id="next"><a class="page-link"
-                                               href="{{ url_for("main.attendees", page=page % chunks + 1, filter=filter, desc=desc, is_students=is_students) }}"
+                                               href="{{ url_for("main.attendees", page=page % chunks + 1, filter=filter, desc=desc, guests=guests) }}"
                                                aria-label="Next">
                 <span aria-hidden="true">&raquo;</span>
             </a>
@@ -106,6 +109,9 @@
                     <div class="modal-header">
                         <div class="h5 modal-title">
                             {{ i.last_name }}, {{ i.first_name }}
+                            {% if i.checked_in %}
+                                <i class="bi bi-check2"></i>
+                            {% endif %}
                         </div>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>

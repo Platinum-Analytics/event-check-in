@@ -180,36 +180,37 @@ def upload():
 
 
 @login_required
-def attendees(is_students=True):
+def attendees():
     stu_filters = {"first_name": Student.first_name, "last_name": Student.last_name, "ticket_num": Student.ticket_num,
                    "school_id": Student.school_id}
     guest_filters = {"first_name": Guest.first_name, "last_name": Guest.last_name, "ticket_num": Guest.ticket_num}
 
     page = request.args.get("page", 1)
     order = request.args.get("filter", "ticket_num")
-    is_desc = request.args.get("desc", False)
+    is_desc = request.args.get("desc") == "True"
+    guests = request.args.get("guests") == "True"
 
-    if is_desc == "True":
-        order = desc(order)
-
-    if is_students:
-        order = stu_filters.get(order, Student.ticket_num)
-        group = db.session.query(Student).order_by(order).all()
-    else:
+    if guests:
         order = guest_filters.get(order, Student.ticket_num)
-        group = db.session.query(Guest).order_by(order).all()
+    else:
+        order = stu_filters.get(order, Student.ticket_num)
+
+    order = desc(order) if is_desc else order
+    group = db.session.query(Guest if guests else Student).order_by(order).all()
+
+    chunkSize = 25
+    chunks = len(group) // chunkSize + 1
 
     try:
-        page = int(page) % (len(group) // 25 + 1)
+        page = int(page)
+        page = page if page in range(1, chunks + 1) else 1
     except ValueError:
         page = 1
 
-    chunkSize = 25
     listEnd = chunkSize * page
-    chunks = len(group) // chunkSize + 1
 
     return render_template("main/attendees.html", group=group[listEnd - chunkSize:listEnd], chunks=chunks,
-                           is_students=is_students)
+                           guests=guests)
 
 
 @fresh_login_required
