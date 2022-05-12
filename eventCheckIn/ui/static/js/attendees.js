@@ -26,38 +26,37 @@ if (urlParams.has("desc")) {
 
 
 // Highlight current page number
-let pageBtn = document.getElementById(`page-${page}`);
+let pageBtn = $(`#page-${page}`);
 if (!pageBtn) {
-    pageBtn = document.getElementById("page-1");
+    pageBtn = $("#page-1");
 }
-pageBtn.classList.add("active");
+pageBtn.addClass("active");
 
 
 // Highlight current filter
-let filterBtn = document.getElementById(filter);
+let filterBtn = $(`#${filter}`);
 if (!filterBtn) {
-    filterBtn = document.getElementById("ticket_num");
+    filterBtn = $("#ticket_num");
 }
-filterBtn.classList.remove("btn-outline-dark");
-filterBtn.classList.add("btn-dark");
+filterBtn.removeClass("btn-outline-dark").addClass("btn-dark");
 
 
 // Change selected icon
-let icon = filterBtn.firstElementChild;
-icon.classList.remove(filterIcon);
+let icon = filterBtn.children().first();
+icon.removeClass(filterIcon);
 
 let isAlpha = filter === "first_name" || filter === "last_name";
 
 if (desc) {
     if (isAlpha) {
-        icon.classList.add(alphaUp);
+        icon.addClass(alphaUp);
     } else {
-        icon.classList.add(numUp);
+        icon.addClass(numUp);
     }
 } else {
     if (isAlpha) {
-        icon.classList.add(alphaDown);
+        icon.addClass(alphaDown);
     } else {
-        icon.classList.add(numDown);
+        icon.addClass(numDown);
     }
 }

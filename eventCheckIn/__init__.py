@@ -1,7 +1,7 @@
 from flask import Flask
 
 from .extensions import csrf, db, lm, bc, session, mail
-from .routes import main, action, password, verify
+from .routes import mainBP, actionBP, passwordBP, verifyBP
 
 
 def create_app():
@@ -27,10 +27,10 @@ def create_app():
     lm.needs_refresh_message_category = "info"
 
     # Blueprint registration
-    app.register_blueprint(main)
-    app.register_blueprint(action)
-    app.register_blueprint(password)
-    app.register_blueprint(verify)
+    app.register_blueprint(mainBP)
+    app.register_blueprint(actionBP)
+    app.register_blueprint(passwordBP)
+    app.register_blueprint(verifyBP)
 
     with app.app_context():
         db.create_all()

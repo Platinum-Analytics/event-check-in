@@ -11,7 +11,7 @@ class Config(object):
 
     # flask-session
     SESSION_TYPE = "sqlalchemy"
-    PERMANENT_SESSION_LIFETIME = timedelta(hours=24)
+    PERMANENT_SESSION_LIFETIME = timedelta(hours=12)
 
     # flask-SQLAlchemy
     SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")

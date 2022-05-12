@@ -34,7 +34,7 @@ class Student(Attendee):  # PHS Student
     has_guest = Column(Boolean, nullable=False)
 
     guests = db.relationship("Guest", backref="host")
-    timeEntries = db.relationship("TimeEntryStudent", backref="student")
+    timeEntries = db.relationship("TimeEntryStudent", backref="student", order_by="TimeEntryStudent.time")
 
     def __init__(self, ticket_num: int, school_id: int, first_name: str, last_name: str, is_cash: bool, check_num: int,
                  has_guest: bool):
@@ -42,18 +42,24 @@ class Student(Attendee):  # PHS Student
         self.school_id = school_id
         self.has_guest = has_guest
 
+    def __str__(self):
+        return f"{self.ticket_num},{self.school_id},{self.first_name},{self.last_name},{'Y' if self.guests else 'N'},"
+
 
 class Guest(Attendee):  # Non-PHS Student
     __tablename__ = "guest"
 
     host_id = Column(Integer, db.ForeignKey("student.school_id"), nullable=False)
 
-    timeEntries = db.relationship("TimeEntryGuest", backref="guest")
+    timeEntries = db.relationship("TimeEntryGuest", backref="guest", order_by="TimeEntryGuest.time")
 
     def __init__(self, ticket_num: int, host_id: int, first_name: str, last_name: str, is_cash: bool,
                  check_num: int):
         super().__init__(ticket_num, first_name, last_name, is_cash, check_num)
         self.host_id = host_id
+
+    def __str__(self):
+        return f"{self.ticket_num},,{self.first_name},{self.last_name},N,{self.host.ticket_num}"
 
 
 # Time entry database models

@@ -1,9 +1,8 @@
-let searchBox = document.getElementById("search");
-
 // redirect all keyboard input to search box
-document.addEventListener('keydown', function () {
-    if (document.activeElement !== searchBox) {
-        searchBox.value = "";
-        searchBox.focus();
+let searchBox = $("#search");
+$(document).keypress(function () {
+        if (!$(":focus").is(searchBox)) {
+            searchBox.val("").focus();
+        }
     }
-})
+)

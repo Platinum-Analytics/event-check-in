@@ -2,7 +2,7 @@
 
 {% block title %}
     Search
-{% endblock %}
+{% endblock title %}
 
 {% block content %}
     <section class="my-5">
@@ -109,6 +109,7 @@
                                     <th>Date</th>
                                     <th>Time</th>
                                     <th>Status</th>
+                                    <th></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -117,6 +118,10 @@
                                         <td>{{ k.time.strftime("%a, %b %e, %Y") }}</td>
                                         <td>{{ k.time.strftime("%r") }}</td>
                                         <td>{{ "Check In" if k.is_check_in else "Check Out" }}</td>
+                                        <td>
+                                            <a href="{{ url_for("action.removeLog", entry_id=k.id, group="student") }}"
+                                               class="btn"><i class="bi bi-trash-fill"></i></a>
+                                        </td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>
@@ -128,7 +133,8 @@
                         <button class="btn btn-outline-secondary" data-bs-dismiss="modal">
                             Close
                         </button>
-                        <a href="{{ url_for("action.logStudent", id_=i.id) }}" type="button" class="btn btn-primary">Check {{ "Out" if i.checked_in else "In" }}</a>
+                        <a href="{{ url_for("action.log", id_=i.id, group="student") }}" type="button"
+                           class="btn btn-primary">Check {{ "Out" if i.checked_in else "In" }}</a>
                     </div>
                 </div>
             </div>
@@ -157,6 +163,7 @@
                                     <th>Date</th>
                                     <th>Time</th>
                                     <th>Status</th>
+                                    <th></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -165,6 +172,10 @@
                                         <td>{{ k.time.strftime("%a, %b %e, %Y") }}</td>
                                         <td>{{ k.time.strftime("%r") }}</td>
                                         <td>Check {{ "In" if k.is_check_in else "Out" }}</td>
+                                        <td>
+                                            <a href="{{ url_for("action.removeLog", entry_id=k.id, group="guest") }}"
+                                               class="btn"><i class="bi bi-trash-fill"></i></a>
+                                        </td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>
@@ -176,7 +187,7 @@
                         <button class="btn btn-outline-secondary" data-bs-dismiss="modal">
                             Close
                         </button>
-                        <a href="{{ url_for("action.logGuest", id_=j.id) }}" type="button"
+                        <a href="{{ url_for("action.log", id_=j.id, group="guest") }}" type="button"
                            class="btn btn-primary">Check {{ "Out" if j.checked_in else "In" }}</a>
                     </div>
                 </div>
@@ -185,4 +196,4 @@
     {% endfor %}
 
     <script src="{{ url_for("static", filename="js/search.js") }}"></script>
-{% endblock %}
+{% endblock content %}

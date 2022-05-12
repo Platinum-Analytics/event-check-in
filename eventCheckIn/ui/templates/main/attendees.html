@@ -1,19 +1,10 @@
-{% extends "base.html" %}
+{% set filter = request.args.get("filter", "ticket_num") %}
+{% set page = request.args.get("page", 1)|int %}
+{% set desc = request.args.get("desc") == "True" %}
+{% set guests = request.args.get("guests") == "True" %}
 
-{% block title %}
-    Guest List
-{% endblock %}
-
-{% block content %}
-    {% set filter = request.args.get("filter", "ticket_num") %}
-    {% set page = request.args.get("page", 1)|int %}
-    {% set desc = request.args.get("desc") == "True" %}
-    {% set guests = request.args.get("guests") == "True" %}
-
-    {% if guests %}
-        {% include "main/implements/guests.html" %}
-    {% else %}
-        {% include "main/implements/students.html" %}
-    {% endif %}
-{% endblock %}
-
+{% if guests %}
+    {% include "main/attendees/guests.html" %}
+{% else %}
+    {% include "main/attendees/students.html" %}
+{% endif %}

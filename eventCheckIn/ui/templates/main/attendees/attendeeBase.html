@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% block group %}{% endblock group %} List
+{% endblock title %}
+
+{% block content %}
+    {# Table #}
+    {% block table %}{% endblock table %}
+
+    {# Pagination #}
+    <section class="my-5">
+        <div class="container">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" id="previous"><a class="page-link"
+                                                       href="{{ url_for("main.attendees", page=((page - 2) % chunks) + 1, filter=filter, desc=desc, guests=guests) }}"
+                                                       aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+                </li>
+                {% for i in range(1, chunks + 1) %}
+                    <li class="page-item" id="page-{{ i }}"><a class="page-link"
+                                                               href="{{ url_for("main.attendees", page=i, filter=filter, desc=desc, guests=guests) }}">{{ i }}</a>
+                    </li>
+                {% endfor %}
+                <li class="page-item" id="next"><a class="page-link"
+                                                   href="{{ url_for("main.attendees", page=page % chunks + 1, filter=filter, desc=desc, guests=guests) }}"
+                                                   aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+                </li>
+
+            </ul>
+        </div>
+    </section>
+
+    {# Modals #}
+    {% block modals %}{% endblock modals %}
+
+    {# Scripts #}
+    <script src="{{ url_for("static", filename="js/attendees.js") }}"></script>
+{% endblock content %}
+
