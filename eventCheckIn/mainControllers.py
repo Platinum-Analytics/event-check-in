@@ -51,6 +51,7 @@ def home():
 @login_required
 def search():
     form = Search()
+
     if not form.validate_on_submit():
         if "returnLog" in session and "search" in session:
             form.query.data = session.get("search")
@@ -62,6 +63,7 @@ def search():
                 flash("Invalid input", "warn")
             return render_template("main/search.html", form=form)
 
+    form.query.data = form.query.data.strip()
     session["search"] = form.query.data
     students = []
     guests = []
@@ -81,7 +83,8 @@ def search():
             for j in i.guests:
                 guests.append(j)
 
-    return render_template("main/search.html", form=form, students=students, guests=guests)
+    return render_template("main/search.html", form=form, students=students, guests=guests,
+                           total_results=len(guests) + len(students))
 
 
 @fresh_login_required

@@ -10,10 +10,18 @@
             <p class="h1 my-3">Find User</p>
             <form method="POST">
                 {{ form.hidden_tag() }}
-                <div class="input-group">
-                    {{ form.query(class="form-control", id="search") }}
-                    <input class="btn btn-outline-primary" type="submit" value="Search">
+                <div class="form-group">
+                    <div class="input-group">
+                        {{ form.query(class="form-control", id="search") }}
+                        <input class="btn btn-outline-primary" type="submit" value="Search">
+                    </div>
+                    {% if total_results %}
+                        <small class="form-text text-muted" id="searchResults">
+                            {{ total_results }} Result{{ "s" if total_results != 1 else "" }}
+                        </small>
+                    {% endif %}
                 </div>
+
             </form>
         </div>
     </section>
@@ -30,6 +38,7 @@
                         <th>First Name</th>
                         <th>Last Name</th>
                         <th></th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -39,13 +48,15 @@
                             <td>{{ i.school_id }}</td>
                             <td>{{ i.first_name }}</td>
                             <td>{{ i.last_name }}</td>
-                            {% if i.checked_in %}
-                                <td>
+                            <td>
+                                <a href="{{ url_for("action.log", id_=i.id, group="student") }}" type="button"
+                                   class="btn btn-outline-dark my-0 py-0 log">Check {{ "Out" if i.checked_in else "In" }}</a>
+                            </td>
+                            <td>
+                                {% if i.checked_in %}
                                     <i class="bi bi-check2"></i>
-                                </td>
-                            {% else %}
-                                <td></td>
-                            {% endif %}
+                                {% endif %}
+                            </td>
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -65,6 +76,7 @@
                         <th>First Name</th>
                         <th>Last Name</th>
                         <th></th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -73,13 +85,15 @@
                             <td>{{ j.ticket_num }}</td>
                             <td>{{ j.first_name }}</td>
                             <td>{{ j.last_name }}</td>
-                            {% if j.checked_in %}
-                                <td>
+                            <td>
+                                <a href="{{ url_for("action.log", id_=j.id, group="guest") }}" type="button"
+                                   class="btn btn-outline-dark my-0 py-0 log">Check {{ "Out" if j.checked_in else "In" }}</a>
+                            </td>
+                            <td>
+                                {% if j.checked_in %}
                                     <i class="bi bi-check2"></i>
-                                </td>
-                            {% else %}
-                                <td></td>
-                            {% endif %}
+                                {% endif %}
+                            </td>
                         </tr>
                     {% endfor %}
                     </tbody>

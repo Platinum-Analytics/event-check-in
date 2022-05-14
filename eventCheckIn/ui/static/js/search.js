@@ -6,3 +6,22 @@ $(document).keypress(function () {
         }
     }
 )
+
+$(".log").each(
+    function () {
+        let btn = $(this)
+        btn.hover(
+            function () {
+                btn.parent().parent().attr("data-bs-toggle", "");
+            }, function () {
+                btn.parent().parent().attr("data-bs-toggle", "modal");
+            }
+        )
+    }
+)
+
+if ($("#searchResults").text().trim() === "1 Result") {
+    new bootstrap.Modal($(".modal").first()).show();
+}
+
+
