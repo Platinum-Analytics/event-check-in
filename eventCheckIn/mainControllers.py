@@ -17,7 +17,7 @@ def login():
     form = UserLogin()
     if not form.validate_on_submit():
         if len(form.errors) != 0:
-            flash("Invalid email/password", "warn")
+            flash("Invalid email/password", "danger")
         return render_template("main/login.html", form=form)
 
     user = db.session.query(User_).filter_by(email=form.email.data.lower()).first()
@@ -26,7 +26,7 @@ def login():
         flash("User does not exist", "info")
         return render_template("main/login.html", form=form)
     elif not user.verified:
-        flash("Please confirm your email", "warn")
+        flash("Please confirm your email", "warning")
         return render_template("main/login.html", form=form)
     elif not bc.check_password_hash(user.password, form.password.data):
         flash("Incorrect password!", "danger")
@@ -60,7 +60,7 @@ def search():
             if "search" in session:
                 session.pop("search")
             if len(form.errors) != 0:
-                flash("Invalid input", "warn")
+                flash("Invalid input", "warning")
             return render_template("main/search.html", form=form)
 
     form.query.data = form.query.data.strip()
@@ -92,7 +92,7 @@ def register():
     form = UserRegister()
     if not form.validate_on_submit():
         if len(form.errors) != 0:
-            flash("Invalid email/password", "warn")
+            flash("Invalid email/password", "danger")
         return render_template("main/register.html", form=form)
 
     user_search = User_.query.filter_by(email=form.email.data).first()
