@@ -13,7 +13,7 @@
                 <div class="form-group">
                     <div class="input-group">
                         {{ form.query(class="form-control", id="search") }}
-                        <input class="btn btn-outline-primary" type="submit" value="Search">
+                        <input class="btn btn-outline-dark" type="submit" value="Search">
                     </div>
                     {% if total_results %}
                         <small class="form-text text-muted" id="searchResults">
@@ -148,7 +148,7 @@
                             Close
                         </button>
                         <a href="{{ url_for("action.log", id_=i.id, group="student") }}" type="button"
-                           class="btn btn-primary">Check {{ "Out" if i.checked_in else "In" }}</a>
+                           class="btn btn-dark">Check {{ "Out" if i.checked_in else "In" }}</a>
                     </div>
                 </div>
             </div>
@@ -202,7 +202,7 @@
                             Close
                         </button>
                         <a href="{{ url_for("action.log", id_=j.id, group="guest") }}" type="button"
-                           class="btn btn-primary">Check {{ "Out" if j.checked_in else "In" }}</a>
+                           class="btn btn-dark">Check {{ "Out" if j.checked_in else "In" }}</a>
                     </div>
                 </div>
             </div>

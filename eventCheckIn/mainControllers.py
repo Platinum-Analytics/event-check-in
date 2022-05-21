@@ -10,7 +10,9 @@ from .scripts import checkString, checkInt, checkBool, checkCash
 
 
 def index():
-    return redirect(url_for("main.home"))
+    if current_user.is_active:
+        return redirect(url_for("main.home"))
+    return redirect(url_for("main.login"))
 
 
 def login():
@@ -210,7 +212,7 @@ def attendees():
     listEnd = chunkSize * page
 
     return render_template("main/attendees.html", group=group[listEnd - chunkSize:listEnd], chunks=chunks,
-                           guests=guests)
+                           guests=guests, total_results=len(group))
 
 
 @fresh_login_required

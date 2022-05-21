@@ -9,11 +9,17 @@
     <section class="my-5">
         <div class="container">
             <div class="d-flex justify-content-between align-items-center">
-                <p class="h1 my-3">All Students</p>
+                <div class="d-flex flex-column mb-3">
+                    <p class="h1 m-0">All Students</p>
+                    <p class="text-muted m-0">{{ total_results }} Total Student{{ "s" if total_results != "1" else "" }}</p>
+                </div>
                 <div class="d-flex">
                     <a href="{{ url_for("main.attendees", guests=true) }}"
-                       class="btn btn-outline-primary mx-1">Guests</a>
-                    <a href="{{ url_for("action.download", group="all") }}" class="btn btn-primary mx-1">Download</a>
+                       class="btn btn-outline-dark mx-1">Guests</a>
+                    <a href="{{ url_for("action.download", group="all") }}" class="btn btn-dark mx-1">
+                        <i class="bi bi-download me-0 me-md-1"></i>
+                        <span class="d-none d-md-inline">Download</span>
+                    </a>
                 </div>
             </div>
 
@@ -49,7 +55,6 @@
 
                         Last <span class="d-none d-md-inline"> Name</span>
                     </th>
-                    <th></th>
                     <th></th>
                 </tr>
                 </thead>
@@ -278,7 +283,7 @@
                                 <button class="btn btn-outline-secondary" data-bs-dismiss="modal">
                                     Close
                                 </button>
-                                <button class="btn btn-primary" data-bs-toggle="modal"
+                                <button class="btn btn-dark" data-bs-toggle="modal"
                                         data-bs-target="#modal-{{ i.school_id }}">
                                     Return
                                 </button>

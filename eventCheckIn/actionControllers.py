@@ -86,16 +86,21 @@ def removeLog(entry_id):
 @login_required
 def download(group):
     def generate(studentList, guestList):
-        yield "Ticket #,Student ID,First Name,Last Name,Has Guest,Host Ticket #\n"
+        yield "Ticket,ID,LAST,MI,FIRST,GR,Payment Method,Guest YN,Guest Ticket Number\n"
 
         if studentList:
             students = db.session.query(Student).all()
             for i in students:
-                yield f"{i.ticket_num},{i.school_id},{i.first_name},{i.last_name},{'Y' if i.guests else 'N'},\n"
+                x = ""
+                for j in i.guests:
+                    x += str(j.ticket_num) + ";"
+                x.strip(";")
+
+                yield f"{i.ticket_num},{i.school_id},{i.last_name},,{i.first_name},,{'cash' if i.is_cash else i.check_num},{'Y' if i.guests else 'N'},{x}\n"
         if guestList:
             guests = db.session.query(Guest).all()
             for i in guests:
-                yield f"{i.ticket_num},,{i.first_name},{i.last_name},N,{i.host.ticket_num}\n"
+                yield f"{i.ticket_num},,{i.last_name},,{i.first_name},,{'cash' if i.is_cash else i.check_num},N,\n"
 
     if group == "students":
         response = Response(stream_with_context(generate(True, False)), mimetype='text/csv')
