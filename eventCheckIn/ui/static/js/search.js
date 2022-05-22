@@ -7,6 +7,7 @@ $(document).keypress(function () {
     }
 )
 
+// Prevent the opening of the modal when pressing the inline check in button
 $(".log").each(
     function () {
         let btn = $(this)
@@ -20,6 +21,7 @@ $(".log").each(
     }
 )
 
+// Open the modal if there is only one search result
 if ($("#searchResults").text().trim() === "1 Result") {
     new bootstrap.Modal($(".modal").first()).show();
 }
