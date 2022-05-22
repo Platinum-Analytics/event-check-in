@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Help
+{% endblock title %}
+
+{% block content %}
+    <section class="my-5">
+        <div class="container">
+            <p class="h1 my-3">Help</p>
+            <div class="nav nav-tabs nav-fill my-4">
+                <button class="nav-link text-dark active fw-bold" data-bs-toggle="tab" data-bs-target="#welcome-pane">
+                    Welcome
+                </button>
+                <button class="nav-link text-dark" data-bs-toggle="tab" data-bs-target="#upload-pane"> Upload</button>
+                <button class="nav-link text-dark" data-bs-toggle="tab" data-bs-target="#search-pane"> Search</button>
+                <button class="nav-link text-dark" data-bs-toggle="tab" data-bs-target="#attendee-list-pane"> Attendee
+                    List
+                </button>
+                </button>
+            </div>
+
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="welcome-pane" tabindex="0">
+                    <div class="container border rounded">
+                        <div class="m-3">
+                            <p> Welcome to the Event Check In application </p>
+                            <p> For help in navigating the website, please click through the above tabs </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="upload-pane" tabindex="0">
+                    <div class="container border rounded">
+                        <div class="m-3">
+                            <p>
+                                To upload data in the form of a csv file (.csv) to the website, select the "Upload CSV
+                                File" option on the home page and click "Choose file" to choose which file to upload
+                            </p>
+                            <p> The uploaded file MUST be in the following format: </p>
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>Ticket</th>
+                                    <th>ID</th>
+                                    <th>LAST</th>
+                                    <th>MI</th>
+                                    <th>FIRST</th>
+                                    <th>GR</th>
+                                    <th>Payment Method</th>
+                                    <th>Guest YN</th>
+                                    <th>Guest Ticket Number</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>123456</td>
+                                    <td>Doe</td>
+                                    <td>L</td>
+                                    <td>John</td>
+                                    <td>12</td>
+                                    <td>Cash</td>
+                                    <td>N</td>
+                                    <td></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="search-pane" tabindex="0">
+                    <div class="container border rounded">
+                        <div class="m-3">
+                            <p>To search for a student or guest in the database, select the "Search" button on the home
+                                page
+                            </p>
+                            <p>
+                                In the search bar, enter a student ID, first name, last name, or ticket number to locate
+                                the student or guest in the database
+                            </p>
+                            <p> Guests can also be searched for by their host's information </p>
+                            <p>
+                                To update an attendees' check-in or check-out time, click on the list of matched
+                                attendees, and select the "Check In" or "Check Out" button on the pop-up
+                            </p>
+                            <p> A barcode scanner can be used to scan student IDs. No additional setup is required </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="attendee-list-pane" tabindex="0">
+                    <div class="container border rounded">
+                        <div class="m-3">
+                            <p>
+                                To view the list of attendees, select the "Attendee List" button on the home page for
+                                a table with all students
+                            </p>
+                            <p>
+                                Select the "Guests" button to see the full list of guests
+                            </p>
+                            <p>
+                                Select any attendee by clicking on their basic information in the table to bring up a
+                                pop-up containing detailed information about the attendee
+                            </p>
+                            <p>
+                                The database can be sorted by student ID, first name, last name, and ticket number by
+                                clicking on the sort button for the desired sort parameter in the table header
+                            </p>
+                            <p>
+                                Clicking the sort button again will reverse the order of the sort
+                            </p>
+                            <p>
+                                To download the data as a csv file in the following format, select the "Download"
+                                button
+                            </p>
+
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>Ticket</th>
+                                    <th>ID</th>
+                                    <th>LAST</th>
+                                    <th>MI</th>
+                                    <th>FIRST</th>
+                                    <th>GR</th>
+                                    <th>Payment Method</th>
+                                    <th>Guest YN</th>
+                                    <th>Guest Ticket Number</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>123456</td>
+                                    <td>Doe</td>
+                                    <td>L</td>
+                                    <td>John</td>
+                                    <td>12</td>
+                                    <td>Cash</td>
+                                    <td>N</td>
+                                    <td></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </section>
+
+    <script src="{{ url_for("static", filename="js/help.js") }}"></script>
+
+{% endblock %}
+
+
+

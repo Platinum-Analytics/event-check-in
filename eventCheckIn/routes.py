@@ -15,7 +15,7 @@ mainBP.add_url_rule("/attendees", "attendees", mainControllers.attendees)
 mainBP.add_url_rule("/home", "home", mainControllers.home)
 mainBP.add_url_rule("/settings", "settings", mainControllers.settings, methods=["GET", "POST"])
 mainBP.add_url_rule("/search", "search", mainControllers.search, methods=["GET", "POST"])
-mainBP.add_url_rule("/helpPage", "helpPage", mainControllers.helpPage)
+mainBP.add_url_rule("/help", "help", mainControllers.helpPage)
 
 actionBP.add_url_rule("/logout", "logout", actionControllers.logout)
 actionBP.add_url_rule("/resetDB", "resetDB", actionControllers.resetDB)

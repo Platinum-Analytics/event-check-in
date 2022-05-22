@@ -233,4 +233,4 @@ def settings():
 
 
 def helpPage():
-    return "Help"
+    return render_template("main/help.html")

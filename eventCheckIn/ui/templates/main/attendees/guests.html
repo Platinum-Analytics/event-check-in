@@ -11,7 +11,8 @@
             <div class="d-flex justify-content-between align-items-center">
                 <div class="d-flex flex-column mb-3">
                     <p class="h1 m-0">All Guests</p>
-                    <p class="text-muted m-0">{{ total_results }} Total Guest{{ "s" if total_results != "1" else "" }}</p>
+                    <p class="text-muted m-0">{{ total_results }} Total
+                        Guest{{ "s" if total_results != "1" else "" }}</p>
                 </div>
                 <div class="d-flex">
                     <a href="{{ url_for("main.attendees", guests=false) }}"
@@ -88,22 +89,19 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <nav>
-                                <div class="nav nav-tabs" role="tablist">
-                                    <button class="nav-link active" data-bs-toggle="tab"
-                                            data-bs-target="#info-{{ i.id }}" type="button" role="tab">
-                                        Info
-                                    </button>
-                                    <button class="nav-link" data-bs-toggle="tab"
-                                            data-bs-target="#log-{{ i.id }}" type="button" role="tab">
-                                        Log
-                                    </button>
-                                </div>
+                            <nav class="nav nav-tabs">
+                                <button class="nav-link active" data-bs-toggle="tab"
+                                        data-bs-target="#info-{{ i.id }}" type="button">
+                                    Info
+                                </button>
+                                <button class="nav-link" data-bs-toggle="tab"
+                                        data-bs-target="#log-{{ i.id }}" type="button">
+                                    Log
+                                </button>
                             </nav>
 
                             <div class="tab-content">
-                                <div class="tab-pane fade show active" id="info-{{ i.id }}"
-                                     role="tabpanel">
+                                <div class="tab-pane fade show active" id="info-{{ i.id }}" tabindex="0">
                                     <div class="container mt-4">
                                         <table class="table table-hover">
                                             <thead>
@@ -125,7 +123,7 @@
                                     </div>
                                 </div>
 
-                                <div class="tab-pane fade" id="log-{{ i.id }}" role="tabpanel">
+                                <div class="tab-pane fade" id="log-{{ i.id }}" tabindex="0">
                                     <div class="container mt-4">
                                         <table class="table table-hover">
                                             <thead>
@@ -174,22 +172,20 @@
                         </div>
                         <div class="modal-body">
                             <nav>
-                                <div class="nav nav-tabs" role="tablist">
+                                <div class="nav nav-tabs">
                                     <button class="nav-link active" data-bs-toggle="tab"
-                                            data-bs-target="#info-{{ i.id }}-{{ j.school_id }}" type="button"
-                                            role="tab">
+                                            data-bs-target="#info-{{ i.id }}-{{ j.school_id }}" type="button">
                                         Info
                                     </button>
                                     <button class="nav-link" data-bs-toggle="tab"
-                                            data-bs-target="#log-{{ i.id }}-{{ j.school_id }}" type="button" role="tab">
+                                            data-bs-target="#log-{{ i.id }}-{{ j.school_id }}" type="button">
                                         Log
                                     </button>
                                 </div>
                             </nav>
 
                             <div class="tab-content">
-                                <div class="tab-pane fade show active" id="info-{{ i.id }}-{{ j.school_id }}"
-                                     role="tabpanel">
+                                <div class="tab-pane fade show active" id="info-{{ i.id }}-{{ j.school_id }}" tabindex="0">
                                     <div class="container mt-4">
                                         <table class="table">
                                             <thead>
@@ -210,7 +206,7 @@
                                     </div>
                                 </div>
 
-                                <div class="tab-pane fade" id="log-{{ i.id }}-{{ j.school_id }}" role="tabpanel">
+                                <div class="tab-pane fade" id="log-{{ i.id }}-{{ j.school_id }}" tabindex="0">
                                     <div class="container mt-4">
                                         <table class="table table-hover">
                                             <thead>
