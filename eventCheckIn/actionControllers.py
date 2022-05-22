@@ -83,8 +83,10 @@ def removeLog(entry_id):
     return redirect(url_for("main.search"))
 
 
+# noinspection PyCallingNonCallable
 @login_required
 def download(group):
+    @stream_with_context
     def generate(studentList, guestList):
         yield "Ticket,ID,LAST,MI,FIRST,GR,Payment Method,Guest YN,Guest Ticket Number\n"
 
@@ -103,15 +105,16 @@ def download(group):
                 yield f"{i.ticket_num},,{i.last_name},,{i.first_name},,{'cash' if i.is_cash else i.check_num},N,\n"
 
     if group == "students":
-        response = Response(stream_with_context(generate(True, False)), mimetype='text/csv')
+        content = generate(True, False)
         filename = "students"
     elif group == "guests":
-        response = Response(stream_with_context(generate(False, True)), mimetype='text/csv')
+        content = generate(False, True)
         filename = "guests"
     else:
-        response = Response(stream_with_context(generate(True, True)), mimetype='text/csv')
+        content = generate(True, True)
         filename = "attendees"
 
+    response = Response(content, mimetype='text/csv')
     response.headers.set("Content-Disposition", "attachment", filename=f"{filename}.csv")
     return response
 
