@@ -32,11 +32,11 @@ def log(id_):
     if group == "student":
         student = db.session.get(Student, id_)
         student.checked_in = not student.checked_in
-        db.session.add(TimeEntryStudent(student.checked_in, id_))
+        db.session.add(TimeEntryStudent(student.checked_in, id_, current_user.email))
     elif group == "guest":
         guest = db.session.get(Guest, id_)
         guest.checked_in = not guest.checked_in
-        db.session.add(TimeEntryGuest(guest.checked_in, id_))
+        db.session.add(TimeEntryGuest(guest.checked_in, id_, current_user.email))
     else:
         return redirect(url_for("main.home"))
 

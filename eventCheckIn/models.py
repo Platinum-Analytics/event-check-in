@@ -68,10 +68,12 @@ class TimeEntryStudent(db.Model):
     time = Column(DateTime(timezone=True), default=func.now(), nullable=False)
     is_check_in = Column(Boolean, nullable=False)
     student_id = Column(Integer, db.ForeignKey("student.id"), nullable=False)
+    staff = Column(Text, nullable=False)
 
-    def __init__(self, check_in: bool, student_id: int):
+    def __init__(self, check_in: bool, student_id: int, staff: str):
         self.is_check_in = check_in
         self.student_id = student_id
+        self.staff = staff
 
 
 class TimeEntryGuest(db.Model):
@@ -79,10 +81,12 @@ class TimeEntryGuest(db.Model):
     time = Column(DateTime(timezone=True), default=func.now(), nullable=False)
     is_check_in = Column(Boolean, nullable=False)
     guest_id = Column(Integer, db.ForeignKey("guest.id"), nullable=False)
+    staff = Column(Text, nullable=False)
 
-    def __init__(self, check_in: bool, guest_id: int):
+    def __init__(self, check_in: bool, guest_id: int, staff: str):
         self.is_check_in = check_in
         self.guest_id = guest_id
+        self.staff = staff
 
 
 # Logins database model
