@@ -5,7 +5,7 @@ from sqlalchemy import or_, desc
 
 from .extensions import db, bc, timedSerializer, mail
 from .forms import CSVUpload, UserLogin, UserRegister, ChangePassword, Search
-from .models import Student, Guest, User_
+from .models import Student, Guest, User_, TimeEntryGuest, TimeEntryStudent
 from .scripts import checkString, checkInt, checkBool, checkCash
 
 
@@ -138,7 +138,8 @@ def upload():
     # Read and parse CSV Data
     rawData = form.csvData.data.read().decode().split('\n')
 
-    parsedData = [i.strip('\r').split(',') for i in rawData]
+    parsedData = [i.strip('\r').split(',') for i in rawData if i]
+    print(parsedData)
     if parsedData[0] != ["Ticket", "ID", "LAST", "MI", "FIRST", "GR", "Payment Method", "Guest YN", "Guest Ticket "
                                                                                                     "Number"]:
         flash("Invalid CSV", "danger")
@@ -147,6 +148,8 @@ def upload():
     del parsedData[0]
 
     # Clear the Student and Guest tables
+    db.session.execute(TimeEntryGuest.__table__.delete())
+    db.session.execute(TimeEntryStudent.__table__.delete())
     db.session.execute(Guest.__table__.delete())
     db.session.execute(Student.__table__.delete())
     db.session.commit()
@@ -156,7 +159,9 @@ def upload():
     guests = []
     for user in parsedData:
         if user[7] == "Y":
-            guest_ids[user[8]] = user[1]  # [guest_id : host_school_id]
+            for i in user[8].split(";"):
+                if i:
+                    guest_ids[i] = user[1]  # [guest_id : host_school_id]
 
     for user in parsedData:
         user_id = user[0]
@@ -234,3 +239,22 @@ def settings():
 
 def helpPage():
     return render_template("main/help.html")
+
+
+@login_required
+def activity_log():
+    student_log = db.session.query(TimeEntryStudent).all()
+    guest_log = db.session.query(TimeEntryGuest).all()
+
+    data = [
+        [i.student.ticket_num, i.student.last_name, i.student.first_name, "Check In" if i.is_check_in else "Check Out",
+         i.time.strftime("%r"), i.staff.split("@")[0]] for i in student_log]
+    temp_data = [
+        [i.guest.ticket_num, i.guest.last_name, i.guest.first_name, "Check In" if i.is_check_in else "Check Out",
+         i.time.strftime("%r"), i.staff.split("@")[0]] for i in guest_log]
+
+    data.extend(temp_data)
+    data.sort(key=lambda e: e[4], reverse=True)
+    print(data)
+
+    return render_template("main/activity_log.html", data=data)

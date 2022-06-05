@@ -42,9 +42,6 @@ class Student(Attendee):  # PHS Student
         self.school_id = school_id
         self.has_guest = has_guest
 
-    def __str__(self):
-        return f"{self.ticket_num},{self.school_id},{self.first_name},{self.last_name},{'Y' if self.guests else 'N'},"
-
 
 class Guest(Attendee):  # Non-PHS Student
     __tablename__ = "guest"

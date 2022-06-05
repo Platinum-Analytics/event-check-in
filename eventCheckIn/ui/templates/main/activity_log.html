@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Activity Log
+{% endblock title %}
+
+{% block content %}
+    <section class="my-5">
+        <div class="container">
+            <p class="h1 my-3">Activity Log</p>
+
+            <table class="table align-middle">
+                <thead>
+                <tr>
+                    <th>Ticket #</th>
+                    <th>Last Name</th>
+                    <th>First Name</th>
+                    <th>Action</th>
+                    <th>Time</th>
+                    <th>Logged By</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for i in data %}
+                    <tr>
+                        {% for y in range(6) %}
+                            <td>{{ i[y] }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+{% endblock %}
