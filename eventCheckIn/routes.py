@@ -16,7 +16,7 @@ mainBP.add_url_rule("/home", "home", mainControllers.home)
 mainBP.add_url_rule("/settings", "settings", mainControllers.settings, methods=["GET", "POST"])
 mainBP.add_url_rule("/search", "search", mainControllers.search, methods=["GET", "POST"])
 mainBP.add_url_rule("/help", "help", mainControllers.helpPage)
-mainBP.add_url_rule("/activity_log", "activity_log", mainControllers.activity_log)
+mainBP.add_url_rule("/activityLog", "activityLog", mainControllers.activityLog)
 
 actionBP.add_url_rule("/logout", "logout", actionControllers.logout)
 actionBP.add_url_rule("/resetDB", "resetDB", actionControllers.resetDB)
@@ -24,6 +24,7 @@ actionBP.add_url_rule("/log/<id_>", "log", actionControllers.log)
 actionBP.add_url_rule("/removeLog/<entry_id>", "removeLog", actionControllers.removeLog)
 actionBP.add_url_rule("/download/<group>", "download", actionControllers.download)
 actionBP.add_url_rule("/deleteUser", "deleteUser", actionControllers.deleteUser)
+actionBP.add_url_rule("/downloadLog", "downloadLog", actionControllers.downloadLog)
 
 passwordBP.add_url_rule("/reauthenticate", "reauthenticate", passwordControllers.reauthenticate,
                         methods=["GET", "POST"])

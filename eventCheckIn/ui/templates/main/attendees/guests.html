@@ -24,50 +24,52 @@
                 </div>
             </div>
 
-            <table class="table table-hover align-middle">
-                <thead>
-                <tr>
-                    <th>
-                        <a href="{{ url_for("main.attendees", filter="ticket_num", desc=filter == "ticket_num" and not desc, guests=guests) }}"
-                           class="btn btn-outline-dark border-0 me-2 px-1 py-0" id="ticket_num">
-                            <i class="bi bi-filter"></i>
-                        </a>
-                        <span class="d-none d-md-inline">Ticket </span> #
-                    </th>
-                    <th>
-                        <a href="{{ url_for("main.attendees", filter="first_name", desc=filter == "first_name" and not desc, guests=guests) }}"
-                           class="btn btn-outline-dark border-0 me-2 px-1 py-0" id="first_name">
-                            <i class="bi bi-filter"></i>
-                        </a>
-                        First <span class="d-none d-md-inline"> Name</span>
-                    </th>
-                    <th>
-                        <a href="{{ url_for("main.attendees", filter="last_name", desc=filter == "last_name" and not desc, guests=guests) }}"
-                           class="btn btn-outline-dark border-0 me-2 px-1 py-0" id="last_name">
-                            <i class="bi bi-filter"></i>
-                        </a>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                    <tr>
+                        <th>
+                            <a href="{{ url_for("main.attendees", filter="ticket_num", desc=filter == "ticket_num" and not desc, guests=guests) }}"
+                               class="btn btn-outline-dark border-0 me-2 px-1 py-0" id="ticket_num">
+                                <i class="bi bi-filter"></i>
+                            </a>
+                            <span class="d-none d-md-inline">Ticket </span> #
+                        </th>
+                        <th>
+                            <a href="{{ url_for("main.attendees", filter="first_name", desc=filter == "first_name" and not desc, guests=guests) }}"
+                               class="btn btn-outline-dark border-0 me-2 px-1 py-0" id="first_name">
+                                <i class="bi bi-filter"></i>
+                            </a>
+                            First <span class="d-none d-md-inline"> Name</span>
+                        </th>
+                        <th>
+                            <a href="{{ url_for("main.attendees", filter="last_name", desc=filter == "last_name" and not desc, guests=guests) }}"
+                               class="btn btn-outline-dark border-0 me-2 px-1 py-0" id="last_name">
+                                <i class="bi bi-filter"></i>
+                            </a>
 
-                        Last <span class="d-none d-md-inline"> Name</span>
-                    </th>
-                    <th></th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for i in group %}
-                    <tr data-bs-toggle="modal" data-bs-target="#modal-{{ i.id }}">
-                        <td class="py-3">{{ i.ticket_num }}</td>
-                        <td class="py-3">{{ i.first_name }}</td>
-                        <td class="py-3">{{ i.last_name }}</td>
-                        <td>
-                            {% if i.checked_in %}
-                                <i class="bi bi-check2"></i>
-                            {% endif %}
-                        </td>
+                            Last <span class="d-none d-md-inline"> Name</span>
+                        </th>
+                        <th></th>
+                        <th></th>
                     </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                    {% for i in group %}
+                        <tr data-bs-toggle="modal" data-bs-target="#modal-{{ i.id }}">
+                            <td class="py-3">{{ i.ticket_num }}</td>
+                            <td class="py-3">{{ i.first_name }}</td>
+                            <td class="py-3">{{ i.last_name }}</td>
+                            <td>
+                                {% if i.checked_in %}
+                                    <i class="bi bi-check2"></i>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </section>
 {% endblock table %}
@@ -102,48 +104,52 @@
                         <div class="tab-content">
                             <div class="tab-pane fade show active" id="info-{{ i.id }}" tabindex="0">
                                 <div class="container mt-4">
-                                    <table class="table table-hover">
-                                        <thead>
-                                        <tr>
-                                            <th>Ticket #</th>
-                                            <th>{{ "Payment Type" if i.is_cash else "Check #" }}</th>
-                                            <th>Host</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr data-bs-toggle="modal"
-                                            data-bs-target="#modal-{{ i.id }}-{{ i.host.school_id }}">
-                                            <td>{{ i.ticket_num }}</td>
-                                            <td>{{ "Cash" if i.is_cash else i.check_num }}</td>
-                                            <td>{{ i.host.last_name }}, {{ i.host.first_name }}</td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                            <tr>
+                                                <th>Ticket #</th>
+                                                <th>{{ "Payment Type" if i.is_cash else "Check #" }}</th>
+                                                <th>Host</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr data-bs-toggle="modal"
+                                                data-bs-target="#modal-{{ i.id }}-{{ i.host.school_id }}">
+                                                <td>{{ i.ticket_num }}</td>
+                                                <td>{{ "Cash" if i.is_cash else i.check_num }}</td>
+                                                <td>{{ i.host.last_name }}, {{ i.host.first_name }}</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="tab-pane fade" id="log-{{ i.id }}" tabindex="0">
                                 <div class="container mt-4">
-                                    <table class="table table-hover">
-                                        <thead>
-                                        <tr>
-                                            <th>Date</th>
-                                            <th>Time</th>
-                                            <th>Status</th>
-                                            <th>Logged By</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {% for k in i.timeEntries %}
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
                                             <tr>
-                                                <td>{{ k.time.strftime("%a, %b %d, %Y") }}</td>
-                                                <td>{{ k.time.strftime("%r") }}</td>
-                                                <td>Check {{ "In" if k.is_check_in else "Out" }}</td>
-                                                <td class="text-break">{{ k.staff.split("@")|first }}</td>
+                                                <th>Date</th>
+                                                <th>Time</th>
+                                                <th>Status</th>
+                                                <th>Logged By</th>
                                             </tr>
-                                        {% endfor %}
-                                        </tbody>
-                                    </table>
+                                            </thead>
+                                            <tbody>
+                                            {% for k in i.timeEntries %}
+                                                <tr>
+                                                    <td>{{ k.time.strftime("%a, %b %d, %Y") }}</td>
+                                                    <td>{{ k.time.strftime("%r") }}</td>
+                                                    <td>Check {{ "In" if k.is_check_in else "Out" }}</td>
+                                                    <td class="text-break">{{ k.staff.split("@")|first }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -189,47 +195,51 @@
                             <div class="tab-pane fade show active" id="info-{{ i.id }}-{{ j.school_id }}"
                                  tabindex="0">
                                 <div class="container mt-4">
-                                    <table class="table">
-                                        <thead>
-                                        <tr>
-                                            <th>Ticket #</th>
-                                            <th>Student ID</th>
-                                            <th>{{ "Payment Type" if j.is_cash else "Check #" }}</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr>
-                                            <td>{{ j.ticket_num }}</td>
-                                            <td>{{ j.school_id }}</td>
-                                            <td>{{ "Cash" if j.is_cash else j.check_num }}</td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                            <tr>
+                                                <th>Ticket #</th>
+                                                <th>Student ID</th>
+                                                <th>{{ "Payment Type" if j.is_cash else "Check #" }}</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr>
+                                                <td>{{ j.ticket_num }}</td>
+                                                <td>{{ j.school_id }}</td>
+                                                <td>{{ "Cash" if j.is_cash else j.check_num }}</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="tab-pane fade" id="log-{{ i.id }}-{{ j.school_id }}" tabindex="0">
                                 <div class="container mt-4">
-                                    <table class="table table-hover">
-                                        <thead>
-                                        <tr>
-                                            <th>Date</th>
-                                            <th>Time</th>
-                                            <th>Status</th>
-                                            <th>Logged By</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {% for k in j.timeEntries %}
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
                                             <tr>
-                                                <td>{{ k.time.strftime("%a, %b %d, %Y") }}</td>
-                                                <td>{{ k.time.strftime("%r") }}</td>
-                                                <td>Check {{ "In" if k.is_check_in else "Out" }}</td>
-                                                <td class="text-break">{{ k.staff.split("@")|first }}</td>
+                                                <th>Date</th>
+                                                <th>Time</th>
+                                                <th>Status</th>
+                                                <th>Logged By</th>
                                             </tr>
-                                        {% endfor %}
-                                        </tbody>
-                                    </table>
+                                            </thead>
+                                            <tbody>
+                                            {% for k in j.timeEntries %}
+                                                <tr>
+                                                    <td>{{ k.time.strftime("%a, %b %d, %Y") }}</td>
+                                                    <td>{{ k.time.strftime("%r") }}</td>
+                                                    <td>Check {{ "In" if k.is_check_in else "Out" }}</td>
+                                                    <td class="text-break">{{ k.staff.split("@")|first }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>

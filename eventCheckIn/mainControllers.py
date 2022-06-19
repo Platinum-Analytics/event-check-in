@@ -296,19 +296,19 @@ def helpPage():
 
 
 @login_required
-def activity_log():
+def activityLog():
     student_log = db.session.query(TimeEntryStudent).all()
     guest_log = db.session.query(TimeEntryGuest).all()
 
     data = [
-        [i.student.ticket_num, i.student.last_name, i.student.first_name, "Check In" if i.is_check_in else "Check Out",
+        [i.student.ticket_num, i.student.school_id, i.student.last_name, i.student.first_name,
+         "Check In" if i.is_check_in else "Check Out",
          i.time.strftime("%r"), i.staff.split("@")[0]] for i in student_log]
     temp_data = [
-        [i.guest.ticket_num, i.guest.last_name, i.guest.first_name, "Check In" if i.is_check_in else "Check Out",
+        [i.guest.ticket_num, "", i.guest.last_name, i.guest.first_name, "Check In" if i.is_check_in else "Check Out",
          i.time.strftime("%r"), i.staff.split("@")[0]] for i in guest_log]
 
     data.extend(temp_data)
-    data.sort(key=lambda e: e[4], reverse=True)
-    print(data)
+    data.sort(key=lambda e: e[5], reverse=True)
 
-    return render_template("main/activity_log.html", data=data)
+    return render_template("main/activityLog.html", data=data)
