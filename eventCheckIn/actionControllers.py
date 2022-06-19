@@ -89,7 +89,7 @@ def download(group):
     def parse_times(entry_list):
         str_list = ""
         for j in entry_list:
-            str_list += j.time.strftime("%b-%d-%Y %I:%M:%S %p") + ";"
+            str_list += j.time.strftime("%b-%d-%Y %I:%M:%S %p") + f"|{j.staff.split('@')[0]};"
         str_list = str_list.strip(";")
 
         return str_list
@@ -117,10 +117,11 @@ def download(group):
             guests = db.session.query(Guest).all()
             for i in guests:
                 check_in = parse_times(
-                    db.session.query(TimeEntryStudent).filter_by(student_id=i.id).filter_by(is_check_in=True).all())
+                    db.session.query(TimeEntryGuest).filter_by(guest_id=i.id).filter_by(is_check_in=True).all())
 
                 check_out = parse_times(
-                    db.session.query(TimeEntryStudent).filter_by(student_id=i.id).filter_by(is_check_in=False).all())
+                    db.session.query(TimeEntryGuest).filter_by(guest_id=i.id).filter_by(is_check_in=False).all())
+
                 yield f"{i.ticket_num},,{i.last_name},,{i.first_name},,{'cash' if i.is_cash else i.check_num},N,,{check_in},{check_out}\n"
 
     if group == "students":

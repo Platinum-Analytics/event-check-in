@@ -21,20 +21,30 @@
                                 <span class="d-inline d-sm-none d-lg-inline">Search</span>
                             </a>
                         </div>
-                        <div class="col-sm d-flex">
-                            <a href="{{ url_for("main.attendees") }}"
-                               class="btn btn-outline-dark flex-fill d-flex align-items-center justify-content-center my-2">
-                                <i class="bi bi-people-fill me-3 me-sm-0 me-lg-3 fs-1"></i>
-                                <span class="d-inline d-sm-none d-lg-inline">Attendee List</span>
-                            </a>
-                        </div>
                     </div>
                     <div class="row flex-grow-1">
+                        <div class="col-sm d-flex">
+                            <a href="{{ url_for("main.activityLog") }}"
+                               class="btn btn-outline-dark flex-fill d-flex align-items-center justify-content-center my-2">
+                                <i class="bi bi-person-lines-fill me-3 me-sm-0 me-lg-3 fs-1"></i>
+                                <span class="d-inline d-sm-none d-lg-inline">Activity Log</span>
+                            </a>
+                        </div>
                         <div class="col-sm d-flex">
                             <a href="{{ url_for("main.upload") }}"
                                class="btn btn-outline-dark flex-fill d-flex align-items-center justify-content-center my-2">
                                 <i class="bi bi-upload me-3 me-sm-0 me-lg-3 fs-1"></i>
                                 <span class="d-inline d-sm-none d-lg-inline">Upload CSV</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row flex-grow-1">
+
+                        <div class="col-sm d-flex">
+                            <a href="{{ url_for("main.attendees") }}"
+                               class="btn btn-outline-dark flex-fill d-flex align-items-center justify-content-center my-2">
+                                <i class="bi bi-people-fill me-3 me-sm-0 me-lg-3 fs-1"></i>
+                                <span class="d-inline d-sm-none d-lg-inline">Attendee List</span>
                             </a>
                         </div>
                         <div class="col-sm d-flex">

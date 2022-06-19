@@ -135,6 +135,12 @@ def register():
 
 @login_required
 def upload():
+    def parse_time(string: str, uid: str, is_guest: bool):
+        time, staff = string.split("|")
+        ltr = "Y" if is_guest else "N"
+
+        return datetime.strptime(time, "%b-%d-%Y %I:%M:%S %p"), [staff, uid, ltr]
+
     form = CSVUpload()
     if not form.validate_on_submit():
         if len(form.errors) != 0:
@@ -184,24 +190,24 @@ def upload():
             if has_log:
                 for i in user[9].split(";"):
                     if i:
-                        print(i)
-                        checkInData[datetime.strptime(i, "%b-%d-%Y %I:%M:%S %p")] = [user[0], "Y"]
+                        time, info = parse_time(i, user[0], True)
+                        checkInData[time] = info
                 for i in user[10].split(";"):
                     if i:
-                        print(i)
-                        checkOutData[datetime.strptime(i, "%b-%d-%Y %I:%M:%S %p")] = [user[0], "Y"]
+                        time, info = parse_time(i, user[0], True)
+                        checkOutData[time] = info
 
             guests.append([user, guest_ids[user_id]])
         else:
             if has_log:
                 for i in user[9].split(";"):
                     if i:
-                        print(i)
-                        checkInData[datetime.strptime(i, "%b-%d-%Y %I:%M:%S %p")] = [user[1], "N"]
+                        time, info = parse_time(i, user[1], False)
+                        checkInData[time] = info
                 for i in user[10].split(";"):
                     if i:
-                        print(i)
-                        checkOutData[datetime.strptime(i, "%b-%d-%Y %I:%M:%S %p")] = [user[1], "N"]
+                        time, info = parse_time(i, user[1], False)
+                        checkOutData[time] = info
 
             is_cash, check_num = checkCash(user[6])
 
@@ -219,20 +225,20 @@ def upload():
     db.session.commit()
 
     for timeData, info in checkInData.items():
-        if info[1] == "N":
-            id_ = db.session.query(Student).filter_by(school_id=int(info[0])).first().id
-            db.session.add(TimeEntryStudent(True, id_, "", timeData))
+        if info[2] == "N":
+            id_ = db.session.query(Student).filter_by(school_id=int(info[1])).first().id
+            db.session.add(TimeEntryStudent(True, id_, info[0], timeData))
         else:
-            id_ = db.session.query(Guest).filter_by(ticket_num=int(info[0])).first().id
-            db.session.add(TimeEntryGuest(True, id_, "", timeData))
+            id_ = db.session.query(Guest).filter_by(ticket_num=int(info[1])).first().id
+            db.session.add(TimeEntryGuest(True, id_, info[0], timeData))
 
     for timeData, info in checkOutData.items():
-        if info[1] == "N":
-            id_ = db.session.query(Student).filter_by(school_id=int(info[0])).first().id
-            db.session.add(TimeEntryStudent(False, id_, "", timeData))
+        if info[2] == "N":
+            id_ = db.session.query(Student).filter_by(school_id=int(info[1])).first().id
+            db.session.add(TimeEntryStudent(False, id_, info[0], timeData))
         else:
-            id_ = db.session.query(Guest).filter_by(ticket_num=int(info[0])).first().id
-            db.session.add(TimeEntryGuest(False, id_, "", timeData))
+            id_ = db.session.query(Guest).filter_by(ticket_num=int(info[1])).first().id
+            db.session.add(TimeEntryGuest(False, id_, info[0], timeData))
 
     db.session.commit()
 
