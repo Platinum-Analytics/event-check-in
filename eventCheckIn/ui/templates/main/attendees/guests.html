@@ -136,7 +136,7 @@
                                         <tbody>
                                         {% for k in i.timeEntries %}
                                             <tr>
-                                                <td>{{ k.time.strftime("%a, %b %e, %Y") }}</td>
+                                                <td>{{ k.time.strftime("%a, %b %d, %Y") }}</td>
                                                 <td>{{ k.time.strftime("%r") }}</td>
                                                 <td>Check {{ "In" if k.is_check_in else "Out" }}</td>
                                                 <td class="text-break">{{ k.staff.split("@")|first }}</td>
@@ -222,7 +222,7 @@
                                         <tbody>
                                         {% for k in j.timeEntries %}
                                             <tr>
-                                                <td>{{ k.time.strftime("%a, %b %e, %Y") }}</td>
+                                                <td>{{ k.time.strftime("%a, %b %d, %Y") }}</td>
                                                 <td>{{ k.time.strftime("%r") }}</td>
                                                 <td>Check {{ "In" if k.is_check_in else "Out" }}</td>
                                                 <td class="text-break">{{ k.staff.split("@")|first }}</td>

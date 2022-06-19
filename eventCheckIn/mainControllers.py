@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import render_template, redirect, url_for, session, flash, request
 from flask_login import login_user, login_required, fresh_login_required, current_user
 from flask_mail import Message
@@ -71,19 +73,23 @@ def search():
     guests = []
     try:
         query = int(form.query.data)
-        students = Student.query.filter(or_(Student.ticket_num == query, Student.school_id == query)).all()
+        students = Student.query.filter(or_(Student.ticket_num == query, Student.school_id == query)).order_by(
+            Student.last_name).all()
 
         guests = Guest.query.filter_by(ticket_num=query).all()
     except ValueError:
         query = form.query.data.title()
 
-        students = Student.query.filter(or_(Student.first_name == query, Student.last_name == query)).all()
+        students = Student.query.filter(or_(Student.first_name == query, Student.last_name == query)).order_by(
+            Student.last_name).all()
         guests = Guest.query.filter(or_(Guest.first_name == query, Guest.last_name == query)).all()
 
     finally:
         for i in students:
             for j in i.guests:
                 guests.append(j)
+
+    guests.sort(key=lambda x: x.last_name)
 
     return render_template("main/search.html", form=form, students=students, guests=guests,
                            total_results=len(guests) + len(students))
@@ -139,9 +145,15 @@ def upload():
     rawData = form.csvData.data.read().decode().split('\n')
 
     parsedData = [i.strip('\r').split(',') for i in rawData if i]
-    print(parsedData)
-    if parsedData[0] != ["Ticket", "ID", "LAST", "MI", "FIRST", "GR", "Payment Method", "Guest YN", "Guest Ticket "
-                                                                                                    "Number"]:
+
+    has_log = False
+    if parsedData[0] == ["Ticket", "ID", "LAST", "MI", "FIRST", "GR", "Payment Method", "Guest YN",
+                         "Guest Ticket Number"]:
+        ...
+    elif parsedData[0] == ["Ticket", "ID", "LAST", "MI", "FIRST", "GR", "Payment Method", "Guest YN",
+                           "Guest Ticket Number", "Check In", "Check Out"]:
+        has_log = True
+    else:
         flash("Invalid CSV", "danger")
         return render_template("main/upload.html", form=form)
 
@@ -157,6 +169,9 @@ def upload():
     # Store the attendees in the database
     guest_ids = {}
     guests = []
+    checkInData = {}
+    checkOutData = {}
+
     for user in parsedData:
         if user[7] == "Y":
             for i in user[8].split(";"):
@@ -166,8 +181,28 @@ def upload():
     for user in parsedData:
         user_id = user[0]
         if user_id in guest_ids.keys():
+            if has_log:
+                for i in user[9].split(";"):
+                    if i:
+                        print(i)
+                        checkInData[datetime.strptime(i, "%b-%d-%Y %I:%M:%S %p")] = [user[0], "Y"]
+                for i in user[10].split(";"):
+                    if i:
+                        print(i)
+                        checkOutData[datetime.strptime(i, "%b-%d-%Y %I:%M:%S %p")] = [user[0], "Y"]
+
             guests.append([user, guest_ids[user_id]])
         else:
+            if has_log:
+                for i in user[9].split(";"):
+                    if i:
+                        print(i)
+                        checkInData[datetime.strptime(i, "%b-%d-%Y %I:%M:%S %p")] = [user[1], "N"]
+                for i in user[10].split(";"):
+                    if i:
+                        print(i)
+                        checkOutData[datetime.strptime(i, "%b-%d-%Y %I:%M:%S %p")] = [user[1], "N"]
+
             is_cash, check_num = checkCash(user[6])
 
             student = Student(checkInt(user[0]), checkInt(user[1]), checkString(user[4]), checkString(user[2]), is_cash,
@@ -182,6 +217,25 @@ def upload():
         db.session.add(guest)
 
     db.session.commit()
+
+    for timeData, info in checkInData.items():
+        if info[1] == "N":
+            id_ = db.session.query(Student).filter_by(school_id=int(info[0])).first().id
+            db.session.add(TimeEntryStudent(True, id_, "", timeData))
+        else:
+            id_ = db.session.query(Guest).filter_by(ticket_num=int(info[0])).first().id
+            db.session.add(TimeEntryGuest(True, id_, "", timeData))
+
+    for timeData, info in checkOutData.items():
+        if info[1] == "N":
+            id_ = db.session.query(Student).filter_by(school_id=int(info[0])).first().id
+            db.session.add(TimeEntryStudent(False, id_, "", timeData))
+        else:
+            id_ = db.session.query(Guest).filter_by(ticket_num=int(info[0])).first().id
+            db.session.add(TimeEntryGuest(False, id_, "", timeData))
+
+    db.session.commit()
+
     flash("File Successfully Uploaded!", "success")
     return render_template("main/upload.html", form=form)
 

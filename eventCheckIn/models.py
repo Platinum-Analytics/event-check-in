@@ -67,7 +67,8 @@ class TimeEntryStudent(db.Model):
     student_id = Column(Integer, db.ForeignKey("student.id"), nullable=False)
     staff = Column(Text, nullable=False)
 
-    def __init__(self, check_in: bool, student_id: int, staff: str):
+    def __init__(self, check_in: bool, student_id: int, staff: str, time=func.now()):
+        self.time = time
         self.is_check_in = check_in
         self.student_id = student_id
         self.staff = staff
@@ -80,7 +81,8 @@ class TimeEntryGuest(db.Model):
     guest_id = Column(Integer, db.ForeignKey("guest.id"), nullable=False)
     staff = Column(Text, nullable=False)
 
-    def __init__(self, check_in: bool, guest_id: int, staff: str):
+    def __init__(self, check_in: bool, guest_id: int, staff: str, time=func.now()):
+        self.time = time
         self.is_check_in = check_in
         self.guest_id = guest_id
         self.staff = staff

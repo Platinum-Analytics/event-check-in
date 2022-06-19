@@ -86,23 +86,42 @@ def removeLog(entry_id):
 # noinspection PyCallingNonCallable
 @login_required
 def download(group):
+    def parse_times(entry_list):
+        str_list = ""
+        for j in entry_list:
+            str_list += j.time.strftime("%b-%d-%Y %I:%M:%S %p") + ";"
+        str_list = str_list.strip(";")
+
+        return str_list
+
     @stream_with_context
     def generate(studentList, guestList):
-        yield "Ticket,ID,LAST,MI,FIRST,GR,Payment Method,Guest YN,Guest Ticket Number\n"
+        yield "Ticket,ID,LAST,MI,FIRST,GR,Payment Method,Guest YN,Guest Ticket Number,Check In,Check Out\n"
 
         if studentList:
             students = db.session.query(Student).all()
             for i in students:
-                x = ""
+                g_ids = ""
                 for j in i.guests:
-                    x += str(j.ticket_num) + ";"
-                x.strip(";")
+                    g_ids += str(j.ticket_num) + ";"
+                g_ids = g_ids.strip(";")
 
-                yield f"{i.ticket_num},{i.school_id},{i.last_name},,{i.first_name},,{'cash' if i.is_cash else i.check_num},{'Y' if i.guests else 'N'},{x}\n"
+                check_in = parse_times(
+                    db.session.query(TimeEntryStudent).filter_by(student_id=i.id).filter_by(is_check_in=True).all())
+
+                check_out = parse_times(
+                    db.session.query(TimeEntryStudent).filter_by(student_id=i.id).filter_by(is_check_in=False).all())
+
+                yield f"{i.ticket_num},{i.school_id},{i.last_name},,{i.first_name},,{'cash' if i.is_cash else i.check_num},{'Y' if i.guests else 'N'},{g_ids},{check_in},{check_out}\n"
         if guestList:
             guests = db.session.query(Guest).all()
             for i in guests:
-                yield f"{i.ticket_num},,{i.last_name},,{i.first_name},,{'cash' if i.is_cash else i.check_num},N,\n"
+                check_in = parse_times(
+                    db.session.query(TimeEntryStudent).filter_by(student_id=i.id).filter_by(is_check_in=True).all())
+
+                check_out = parse_times(
+                    db.session.query(TimeEntryStudent).filter_by(student_id=i.id).filter_by(is_check_in=False).all())
+                yield f"{i.ticket_num},,{i.last_name},,{i.first_name},,{'cash' if i.is_cash else i.check_num},N,,{check_in},{check_out}\n"
 
     if group == "students":
         content = generate(True, False)
