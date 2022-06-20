@@ -7,7 +7,7 @@ class Config(object):
 
     # flask-login
     USE_SESSION_FOR_NEXT = True
-    REMEMBER_COOKIE_DURATION = timedelta(hours=168)
+    REMEMBER_COOKIE_DURATION = timedelta(days=30)
 
     # flask-session
     SESSION_TYPE = "sqlalchemy"
