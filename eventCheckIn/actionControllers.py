@@ -139,6 +139,7 @@ def download(group):
     return response
 
 
+# noinspection PyCallingNonCallable
 @login_required
 def downloadLog():
     @stream_with_context
@@ -167,7 +168,7 @@ def downloadLog():
             row += "\n"
             yield row
 
-    response = Response(generate(), mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response = Response(generate(), mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
     response.headers.set("Content-Disposition", "attachment", filename=f"activity_log.xlsx")
     return response
 

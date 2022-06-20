@@ -224,7 +224,11 @@ def upload():
 
     db.session.commit()
 
+    all_attendees = []
     for timeData, info in checkInData.items():
+        if info[1] not in all_attendees:
+            all_attendees.append(info)
+
         if info[2] == "N":
             id_ = db.session.query(Student).filter_by(school_id=int(info[1])).first().id
             db.session.add(TimeEntryStudent(True, id_, info[0], timeData))
@@ -233,6 +237,9 @@ def upload():
             db.session.add(TimeEntryGuest(True, id_, info[0], timeData))
 
     for timeData, info in checkOutData.items():
+        if info[1] not in all_attendees:
+            all_attendees.append(info)
+
         if info[2] == "N":
             id_ = db.session.query(Student).filter_by(school_id=int(info[1])).first().id
             db.session.add(TimeEntryStudent(False, id_, info[0], timeData))
@@ -242,6 +249,17 @@ def upload():
 
     db.session.commit()
 
+    for info in all_attendees:
+        if info[2] == "N":
+            student = db.session.query(Student).filter_by(school_id=int(info[1])).first()
+            if student.timeEntries[0].is_check_in:
+                student.checked_in = True
+        else:
+            guest = db.session.query(Guest).filter_by(ticket_num=int(info[1])).first()
+            if guest.timeEntries[0].is_check_in:
+                guest.checked_in = True
+
+    db.session.commit()
     flash("File Successfully Uploaded!", "success")
     return render_template("main/upload.html", form=form)
 
