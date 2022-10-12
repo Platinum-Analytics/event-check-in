@@ -1,3 +1,4 @@
+import csv
 from datetime import datetime
 
 from flask import render_template, redirect, url_for, session, flash, request
@@ -149,15 +150,20 @@ def upload():
 
     # Read and parse CSV Data
     rawData = form.csvData.data.read().decode().split('\n')
-
-    parsedData = [i.strip('\r').split(',') for i in rawData if i]
+    cleanData = []
+    for row in rawData:
+        if row:
+            rowList = row.split("\"")
+            if len(rowList) > 1:
+                rowList[1] = rowList[1].replace(",", ";")
+            cleanData.append("".join(rowList))
+    print(cleanData)
+    parsedData = [i.strip('\r').split(',') for i in cleanData if i]
 
     has_log = False
-    if parsedData[0] == ["Ticket", "ID", "LAST", "MI", "FIRST", "GR", "Payment Method", "Guest YN",
-                         "Guest Ticket Number"]:
+    if parsedData[0] == ["Student #", "Student Name", "Grade", "Purchased"]:
         ...
-    elif parsedData[0] == ["Ticket", "ID", "LAST", "MI", "FIRST", "GR", "Payment Method", "Guest YN",
-                           "Guest Ticket Number", "Check In", "Check Out"]:
+    elif parsedData[0] == ["Student #", "Student Name", "Grade", "Purchased", "Check In", "Check Out"]:
         has_log = True
     else:
         flash("Invalid CSV", "danger")
@@ -179,48 +185,21 @@ def upload():
     checkOutData = {}
 
     for user in parsedData:
-        if user[7] == "Y":
-            for i in user[8].split(";"):
+        if has_log:
+            for i in user[9].split(";"):
                 if i:
-                    guest_ids[i] = user[1]  # [guest_id : host_school_id]
+                    time, info = parse_time(i, user[1], False)
+                    checkInData[time] = info
+            for i in user[10].split(";"):
+                if i:
+                    time, info = parse_time(i, user[1], False)
+                    checkOutData[time] = info
 
-    for user in parsedData:
-        user_id = user[0]
-        if user_id in guest_ids.keys():
-            if has_log:
-                for i in user[9].split(";"):
-                    if i:
-                        time, info = parse_time(i, user[0], True)
-                        checkInData[time] = info
-                for i in user[10].split(";"):
-                    if i:
-                        time, info = parse_time(i, user[0], True)
-                        checkOutData[time] = info
+        print(user[1])
+        fName, lName = user[1].split("; ")
+        student = Student(checkInt(user[0]), checkString(fName), checkString(lName), checkInt(user[2]), False)
 
-            guests.append([user, guest_ids[user_id]])
-        else:
-            if has_log:
-                for i in user[9].split(";"):
-                    if i:
-                        time, info = parse_time(i, user[1], False)
-                        checkInData[time] = info
-                for i in user[10].split(";"):
-                    if i:
-                        time, info = parse_time(i, user[1], False)
-                        checkOutData[time] = info
-
-            is_cash, check_num = checkCash(user[6])
-
-            student = Student(checkInt(user[0]), checkInt(user[1]), checkString(user[4]), checkString(user[2]), is_cash,
-                              check_num, checkBool(user[7]))
-
-            db.session.add(student)
-
-    for user, host_school_id in guests:
-        is_cash, check_num = checkCash(user[6])
-        guest = Guest(checkInt(user[0]), host_school_id, checkString(user[4]), checkString(user[2]), is_cash, check_num)
-
-        db.session.add(guest)
+        db.session.add(student)
 
     db.session.commit()
 
@@ -266,19 +245,18 @@ def upload():
 
 @login_required
 def attendees():
-    stu_filters = {"first_name": Student.first_name, "last_name": Student.last_name, "ticket_num": Student.ticket_num,
-                   "school_id": Student.school_id}
-    guest_filters = {"first_name": Guest.first_name, "last_name": Guest.last_name, "ticket_num": Guest.ticket_num}
+    stu_filters = {"first_name": Student.first_name, "last_name": Student.last_name, "school_id": Student.school_id}
+    guest_filters = {"first_name": Guest.first_name, "last_name": Guest.last_name}
 
     page = request.args.get("page", 1)
-    order = request.args.get("filter", "ticket_num")
+    order = request.args.get("filter", "last_name")
     is_desc = request.args.get("desc") == "True"
     guests = request.args.get("guests") == "True"
 
     if guests:
-        order = guest_filters.get(order, Student.ticket_num)
+        order = guest_filters.get(order, Student.last_name)
     else:
-        order = stu_filters.get(order, Student.ticket_num)
+        order = stu_filters.get(order, Student.last_name)
 
     order = desc(order) if is_desc else order
     group = db.session.query(Guest if guests else Student).order_by(order).all()

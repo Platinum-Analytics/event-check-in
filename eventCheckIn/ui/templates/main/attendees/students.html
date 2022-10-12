@@ -29,13 +29,6 @@
                     <thead>
                     <tr>
                         <th>
-                            <a href="{{ url_for("main.attendees", filter="ticket_num", desc=filter == "ticket_num" and not desc, guests=guests) }}"
-                               class="btn btn-outline-dark border-0 me-2 px-1 py-0" id="ticket_num">
-                                <i class="bi bi-filter"></i>
-                            </a>
-                            <span class="d-none d-md-inline">Ticket </span> #
-                        </th>
-                        <th>
                             <a href="{{ url_for("main.attendees", filter="school_id", desc=filter == "school_id" and not desc, guests=guests) }}"
                                class="btn btn-outline-dark border-0 me-2 px-1 py-0" id="school_id">
                                 <i class="bi bi-filter"></i>
@@ -63,7 +56,6 @@
                     <tbody>
                     {% for i in group %}
                         <tr data-bs-toggle="modal" data-bs-target="#modal-{{ i.school_id }}">
-                            <td class="py-3">{{ i.ticket_num }}</td>
                             <td class="py-3">{{ i.school_id }}</td>
                             <td class="py-3">{{ i.first_name }}</td>
                             <td class="py-3">{{ i.last_name }}</td>
@@ -129,16 +121,12 @@
                                         <table class="table">
                                             <thead>
                                             <tr>
-                                                <th>Ticket #</th>
                                                 <th>Student ID</th>
-                                                <th>{{ "Payment Type" if i.is_cash else "Check #" }}</th>
                                             </tr>
                                             </thead>
                                             <tbody>
                                             <tr>
-                                                <td>{{ i.ticket_num }}</td>
                                                 <td>{{ i.school_id }}</td>
-                                                <td>{{ "Cash" if i.is_cash else i.check_num }}</td>
                                             </tr>
                                             </tbody>
                                         </table>
@@ -152,20 +140,16 @@
                                         <table class="table table-hover">
                                             <thead>
                                             <tr>
-                                                <th>Ticket #</th>
                                                 <th>First Name</th>
                                                 <th>Last Name</th>
-                                                <th>{{ "Payment Type" if i.is_cash else "Check #" }}</th>
                                             </tr>
                                             </thead>
                                             <tbody>
                                             {% for j in i.guests %}
                                                 <tr data-bs-toggle="modal"
                                                     data-bs-target="#modal-{{ i.school_id }}-{{ j.id }}">
-                                                    <td class="py-3">{{ j.ticket_num }}</td>
                                                     <td class="py-3">{{ j.first_name }}</td>
                                                     <td class="py-3">{{ j.last_name }}</td>
-                                                    <td class="py-3">{{ "Cash" if j.is_cash else j.check_num }}</td>
                                                 </tr>
                                             {% endfor %}
                                             </tbody>
@@ -241,28 +225,6 @@
                                 </div>
                             </nav>
                             <div class="tab-content">
-                                <div class="tab-pane fade show active" id="info-{{ i.school_id }}-{{ j.id }}"
-                                     tabindex="0">
-                                    <div class="container mt-4">
-                                        <div class="table-responsive">
-                                            <table class="table">
-                                                <thead>
-                                                <tr>
-                                                    <th>Ticket #</th>
-                                                    <th>{{ "Payment Type" if j.is_cash else "Check #" }}</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                <tr>
-                                                    <td>{{ j.ticket_num }}</td>
-                                                    <td>{{ "Cash" if j.is_cash else j.check_num }}</td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-
                                 <div class="tab-pane fade" id="log-{{ i.school_id }}-{{ j.id }}" tabindex="0">
                                     <div class="container mt-4">
                                         <div class="table-responsive">

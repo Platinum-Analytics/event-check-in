@@ -1,4 +1,4 @@
-{% set filter = request.args.get("filter", "ticket_num") %}
+{% set filter = request.args.get("filter", "last_name") %}
 {% set page = request.args.get("page", 1)|int %}
 {% set desc = request.args.get("desc") == "True" %}
 {% set guests = request.args.get("guests") == "True" %}

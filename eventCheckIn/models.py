@@ -11,19 +11,15 @@ class Attendee(db.Model):  # Abstract parent class
     __abstract__ = True
 
     id = Column(Integer, primary_key=True)
-    ticket_num = Column(Integer, nullable=False)
     first_name = Column(Text)
     last_name = Column(Text)
-    is_cash = Column(Boolean, nullable=False)
-    check_num = Column(Integer)
+    grade = Column(Integer)
     checked_in = Column(Boolean)
 
-    def __init__(self, ticket_num: int, first_name: str, last_name: str, is_cash: bool, check_num: int):
-        self.ticket_num = ticket_num
+    def __init__(self, first_name: str, last_name: str, grade: int):
         self.first_name = first_name
         self.last_name = last_name
-        self.is_cash = is_cash
-        self.check_num = check_num
+        self.grade = grade
         self.checked_in = False
 
 
@@ -36,9 +32,8 @@ class Student(Attendee):  # PHS Student
     guests = db.relationship("Guest", backref="host")
     timeEntries = db.relationship("TimeEntryStudent", backref="student", order_by="TimeEntryStudent.time")
 
-    def __init__(self, ticket_num: int, school_id: int, first_name: str, last_name: str, is_cash: bool, check_num: int,
-                 has_guest: bool):
-        super().__init__(ticket_num, first_name, last_name, is_cash, check_num)
+    def __init__(self, school_id: int, first_name: str, last_name: str, grade: int, has_guest: bool):
+        super().__init__(first_name, last_name, grade)
         self.school_id = school_id
         self.has_guest = has_guest
 
@@ -50,9 +45,8 @@ class Guest(Attendee):  # Non-PHS Student
 
     timeEntries = db.relationship("TimeEntryGuest", backref="guest", order_by="TimeEntryGuest.time")
 
-    def __init__(self, ticket_num: int, host_id: int, first_name: str, last_name: str, is_cash: bool,
-                 check_num: int):
-        super().__init__(ticket_num, first_name, last_name, is_cash, check_num)
+    def __init__(self, host_id: int, first_name: str, last_name: str):
+        super().__init__(first_name, last_name, -1)
         self.host_id = host_id
 
     def __str__(self):
