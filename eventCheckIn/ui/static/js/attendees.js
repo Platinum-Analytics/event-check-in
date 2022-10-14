@@ -8,7 +8,7 @@ let numUp = "bi-sort-numeric-up";
 
 // Set default query params
 let page = "1";
-let filter = "ticket_num";
+let filter = "last_name";
 let desc = false;
 
 
@@ -36,7 +36,7 @@ pageBtn.addClass("active");
 // Highlight current filter
 let filterBtn = $(`#${filter}`);
 if (!filterBtn) {
-    filterBtn = $("#ticket_num");
+    filterBtn = $("#last_name");
 }
 filterBtn.removeClass("btn-outline-dark").addClass("btn-dark");
 

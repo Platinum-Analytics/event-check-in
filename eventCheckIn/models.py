@@ -49,9 +49,6 @@ class Guest(Attendee):  # Non-PHS Student
         super().__init__(first_name, last_name, -1)
         self.host_id = host_id
 
-    def __str__(self):
-        return f"{self.ticket_num},,{self.first_name},{self.last_name},N,{self.host.ticket_num}"
-
 
 # Time entry database models
 class TimeEntryStudent(db.Model):

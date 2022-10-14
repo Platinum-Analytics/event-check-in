@@ -74,10 +74,9 @@ def search():
     guests = []
     try:
         query = int(form.query.data)
-        students = Student.query.filter(or_(Student.ticket_num == query, Student.school_id == query)).order_by(
+        students = Student.query.filter(Student.school_id == query).order_by(
             Student.last_name).all()
 
-        guests = Guest.query.filter_by(ticket_num=query).all()
     except ValueError:
         query = form.query.data.title()
 
@@ -186,13 +185,13 @@ def upload():
 
     for user in parsedData:
         if has_log:
-            for i in user[9].split(";"):
+            for i in user[4].split(";"):
                 if i:
-                    time, info = parse_time(i, user[1], False)
+                    time, info = parse_time(i, user[0], False)
                     checkInData[time] = info
-            for i in user[10].split(";"):
+            for i in user[5].split(";"):
                 if i:
-                    time, info = parse_time(i, user[1], False)
+                    time, info = parse_time(i, user[0], False)
                     checkOutData[time] = info
 
         print(user[1])
@@ -303,11 +302,11 @@ def activityLog():
     guest_log = db.session.query(TimeEntryGuest).all()
 
     data = [
-        [i.student.ticket_num, i.student.school_id, i.student.last_name, i.student.first_name,
+        [i.student.school_id, i.student.last_name, i.student.first_name,
          "Check In" if i.is_check_in else "Check Out",
          i.time.strftime("%r"), i.staff.split("@")[0]] for i in student_log]
     temp_data = [
-        [i.guest.ticket_num, "", i.guest.last_name, i.guest.first_name, "Check In" if i.is_check_in else "Check Out",
+        ["", i.guest.last_name, i.guest.first_name, "Check In" if i.is_check_in else "Check Out",
          i.time.strftime("%r"), i.staff.split("@")[0]] for i in guest_log]
 
     data.extend(temp_data)

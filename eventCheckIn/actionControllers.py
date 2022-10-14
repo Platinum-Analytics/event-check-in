@@ -96,23 +96,18 @@ def download(group):
 
     @stream_with_context
     def generate(studentList, guestList):
-        yield "Ticket,ID,LAST,MI,FIRST,GR,Payment Method,Guest YN,Guest Ticket Number,Check In,Check Out\n"
+        yield "Student #,Student Name,Grade,Purchased,Check In,Check Out\n"
 
         if studentList:
             students = db.session.query(Student).all()
             for i in students:
-                g_ids = ""
-                for j in i.guests:
-                    g_ids += str(j.ticket_num) + ";"
-                g_ids = g_ids.strip(";")
-
                 check_in = parse_times(
                     db.session.query(TimeEntryStudent).filter_by(student_id=i.id).filter_by(is_check_in=True).all())
 
                 check_out = parse_times(
                     db.session.query(TimeEntryStudent).filter_by(student_id=i.id).filter_by(is_check_in=False).all())
 
-                yield f"{i.ticket_num},{i.school_id},{i.last_name},,{i.first_name},,{'cash' if i.is_cash else i.check_num},{'Y' if i.guests else 'N'},{g_ids},{check_in},{check_out}\n"
+                yield f"{i.school_id},\"{i.last_name}, {i.first_name}\",,,{check_in},{check_out}\n"
         if guestList:
             guests = db.session.query(Guest).all()
             for i in guests:
@@ -122,7 +117,7 @@ def download(group):
                 check_out = parse_times(
                     db.session.query(TimeEntryGuest).filter_by(guest_id=i.id).filter_by(is_check_in=False).all())
 
-                yield f"{i.ticket_num},,{i.last_name},,{i.first_name},,{'cash' if i.is_cash else i.check_num},N,,{check_in},{check_out}\n"
+                yield f",\"{i.last_name}, {i.first_name}\",,,{check_in},{check_out}\n"
 
     if group == "students":
         content = generate(True, False)
@@ -148,18 +143,18 @@ def downloadLog():
         guest_log = db.session.query(TimeEntryGuest).all()
 
         data = [
-            [i.student.ticket_num, i.student.school_id, i.student.last_name, i.student.first_name,
+            [i.student.school_id, f"\"{i.student.last_name}, {i.student.first_name}\"",
              "Check In" if i.is_check_in else "Check Out",
              i.time.strftime("%r"), i.staff.split("@")[0]] for i in student_log]
         temp_data = [
-            [i.guest.ticket_num, "", i.guest.last_name, i.guest.first_name,
+            ["", f"\"{i.guest.last_name}, {i.guest.first_name}\"",
              "Check In" if i.is_check_in else "Check Out",
              i.time.strftime("%r"), i.staff.split("@")[0]] for i in guest_log]
 
         data.extend(temp_data)
-        data.sort(key=lambda e: e[5], reverse=True)
+        data.sort(key=lambda e: e[3], reverse=True)
 
-        yield "Ticket,ID,Last,First,Action,Time,Logged By\n"
+        yield "Student #,Student Name,Check In/Out,Time,Staff\n"
         for j in data:
             row = ""
             for k in j:
