@@ -5,6 +5,7 @@ from flask import render_template, redirect, url_for, session, flash, request
 from flask_login import login_user, login_required, fresh_login_required, current_user
 from flask_mail import Message
 from sqlalchemy import or_, desc
+from sqlalchemy.exc import IntegrityError
 
 from .extensions import db, bc, timedSerializer, mail
 from .forms import CSVUpload, UserLogin, UserRegister, ChangePassword, Search
@@ -195,12 +196,17 @@ def upload():
                     checkOutData[time] = info
 
         print(user[1])
-        fName, lName = user[1].split("; ")
-        student = Student(checkInt(user[0]), checkString(fName), checkString(lName), checkInt(user[2]), False)
+        lName, fName = user[1].split("; ")
+        student = Student(checkInt(user[0]), checkString(lName), checkString(fName), checkInt(user[2]), False)
 
-        db.session.add(student)
-
-    db.session.commit()
+        try:
+            db.session.add(student)
+            db.session.commit()
+        except:
+            student.has_guest = True
+            db.session.rollback()
+            db.session.add(Guest(checkInt(user[0]), checkString(fName), checkString(lName)))
+            db.session.commit()
 
     all_attendees = []
     for timeData, info in checkInData.items():
