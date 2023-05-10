@@ -2,28 +2,28 @@ from .models import User_
 from .extensions import lm
 
 
-def checkInt(value: str) -> int | None:
+def checkInt(value: str):
     try:
         return int(value)
     except ValueError:
         return None
 
 
-def checkString(value: str) -> str | None:
+def checkString(value: str):
     if value in ("", " "):
         return None
     else:
         return value.title()
 
 
-def checkBool(value: str) -> bool | None:
+def checkBool(value: str):
     if value in ('Y', 'y'):
         return True
     else:
         return False
 
 
-def checkCash(value: str) -> tuple | None:
+def checkCash(value: str):
     if value == "cash":
         is_cash = True
         check_num = None
