@@ -13,13 +13,11 @@ class Attendee(db.Model):  # Abstract parent class
     id = Column(Integer, primary_key=True)
     first_name = Column(Text)
     last_name = Column(Text)
-    grade = Column(Integer)
     checked_in = Column(Boolean)
 
-    def __init__(self, first_name: str, last_name: str, grade: int):
+    def __init__(self, first_name: str, last_name: str):
         self.first_name = first_name
         self.last_name = last_name
-        self.grade = grade
         self.checked_in = False
 
 
@@ -32,8 +30,8 @@ class Student(Attendee):  # PHS Student
     guests = db.relationship("Guest", backref="host")
     timeEntries = db.relationship("TimeEntryStudent", backref="student", order_by="TimeEntryStudent.time")
 
-    def __init__(self, school_id: int, last_name: str, first_name: str, grade: int, has_guest: bool):
-        super().__init__(first_name, last_name, grade)
+    def __init__(self, school_id: int, first_name: str, last_name: str, has_guest: bool):
+        super().__init__(first_name, last_name)
         self.school_id = school_id
         self.has_guest = has_guest
 
@@ -46,7 +44,7 @@ class Guest(Attendee):  # Non-PHS Student
     timeEntries = db.relationship("TimeEntryGuest", backref="guest", order_by="TimeEntryGuest.time")
 
     def __init__(self, host_id: int, first_name: str, last_name: str):
-        super().__init__(first_name, last_name, -1)
+        super().__init__(first_name, last_name)
         self.host_id = host_id
 
 

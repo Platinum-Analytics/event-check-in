@@ -1,3 +1,6 @@
+from datetime import timezone
+
+import pytz as pytz
 from flask import redirect, url_for, session, flash, request, Response, stream_with_context
 from flask_login import logout_user, login_required, current_user
 
@@ -82,52 +85,33 @@ def removeLog(entry_id):
     session["returnLog"] = True
     return redirect(url_for("main.search"))
 
-
 # noinspection PyCallingNonCallable
 @login_required
 def download(group):
     def parse_times(entry_list):
         str_list = ""
         for j in entry_list:
-            str_list += j.time.strftime("%b-%d-%Y %I:%M:%S %p") + f"|{j.staff.split('@')[0]};"
+            str_list += pytz.timezone("UTC").localize(j.time).astimezone(pytz.timezone("America/New_York")).strftime("%b-%d-%Y %I:%M:%S %p") + f"|{j.staff.split('@')[0]};"
         str_list = str_list.strip(";")
 
         return str_list
 
     @stream_with_context
-    def generate(studentList, guestList):
-        yield "Student #,Student Name,Grade,Purchased,Check In,Check Out\n"
+    def generate():
+        yield "Student #,Student Name,# Tickets,Check In,Check Out\n"
 
-        if studentList:
-            students = db.session.query(Student).all()
-            for i in students:
-                check_in = parse_times(
-                    db.session.query(TimeEntryStudent).filter_by(student_id=i.id).filter_by(is_check_in=True).all())
+        students = db.session.query(Student).all()
+        for i in students:
+            check_in = parse_times(
+                db.session.query(TimeEntryStudent).filter_by(student_id=i.id).filter_by(is_check_in=True).all())
 
-                check_out = parse_times(
-                    db.session.query(TimeEntryStudent).filter_by(student_id=i.id).filter_by(is_check_in=False).all())
+            check_out = parse_times(
+                db.session.query(TimeEntryStudent).filter_by(student_id=i.id).filter_by(is_check_in=False).all())
 
-                yield f"{i.school_id},\"{i.last_name}, {i.first_name}\",,,{check_in},{check_out}\n"
-        if guestList:
-            guests = db.session.query(Guest).all()
-            for i in guests:
-                check_in = parse_times(
-                    db.session.query(TimeEntryGuest).filter_by(guest_id=i.id).filter_by(is_check_in=True).all())
+            yield f"{i.school_id},\"{i.first_name} {i.last_name}\",{2 if i.has_guest else 1},{check_in},{check_out}\n"
 
-                check_out = parse_times(
-                    db.session.query(TimeEntryGuest).filter_by(guest_id=i.id).filter_by(is_check_in=False).all())
-
-                yield f",\"{i.last_name}, {i.first_name}\",,,{check_in},{check_out}\n"
-
-    if group == "students":
-        content = generate(True, False)
-        filename = "students"
-    elif group == "guests":
-        content = generate(False, True)
-        filename = "guests"
-    else:
-        content = generate(True, True)
-        filename = "attendees"
+    content = generate()
+    filename = "attendees"
 
     response = Response(content, mimetype='text/csv')
     response.headers.set("Content-Disposition", "attachment", filename=f"{filename}.csv")
@@ -143,13 +127,13 @@ def downloadLog():
         guest_log = db.session.query(TimeEntryGuest).all()
 
         data = [
-            [i.student.school_id, f"\"{i.student.last_name}, {i.student.first_name}\"",
+            [i.student.school_id, f"\"{i.student.first_name}, {i.student.last_name}\"",
              "Check In" if i.is_check_in else "Check Out",
-             i.time.strftime("%r"), i.staff.split("@")[0]] for i in student_log]
+             pytz.timezone("UTC").localize(i.time).astimezone(pytz.timezone("America/New_York")).strftime("%r"), i.staff.split("@")[0]] for i in student_log]
         temp_data = [
-            ["", f"\"{i.guest.last_name}, {i.guest.first_name}\"",
+            [" ", f"\"{i.guest.first_name}, {i.guest.last_name}\"",
              "Check In" if i.is_check_in else "Check Out",
-             i.time.strftime("%r"), i.staff.split("@")[0]] for i in guest_log]
+             pytz.timezone("UTC").localize(i.time).astimezone(pytz.timezone("America/New_York")).strftime("%r"), i.staff.split("@")[0]] for i in guest_log]
 
         data.extend(temp_data)
         data.sort(key=lambda e: e[3], reverse=True)

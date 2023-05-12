@@ -1,3 +1,4 @@
+import pytz
 from flask import Flask
 
 from .extensions import csrf, db, lm, bc, session, mail
@@ -31,6 +32,10 @@ def create_app():
     app.register_blueprint(actionBP)
     app.register_blueprint(passwordBP)
     app.register_blueprint(verifyBP)
+
+    @app.template_filter()
+    def time_format(i, format_):
+        return pytz.timezone("UTC").localize(i).astimezone(pytz.timezone("America/New_York")).strftime(format_)
 
     with app.app_context():
         db.create_all()

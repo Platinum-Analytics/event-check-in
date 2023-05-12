@@ -1,6 +1,7 @@
 import csv
 from datetime import datetime
 
+import pytz
 from flask import render_template, redirect, url_for, session, flash, request
 from flask_login import login_user, login_required, fresh_login_required, current_user
 from flask_mail import Message
@@ -140,7 +141,9 @@ def upload():
         time, staff = string.split("|")
         ltr = "Y" if is_guest else "N"
 
-        return datetime.strptime(time, "%b-%d-%Y %I:%M:%S %p"), [staff, uid, ltr]
+        timeF = pytz.timezone("America/New_York").localize(datetime.strptime(time, "%b-%d-%Y %I:%M:%S %p")).astimezone(
+            pytz.utc)
+        return timeF, [staff, uid, ltr]
 
     form = CSVUpload()
     if not form.validate_on_submit():
@@ -161,9 +164,9 @@ def upload():
     parsedData = [i.strip('\r').split(',') for i in cleanData if i]
 
     has_log = False
-    if parsedData[0] == ["Student #", "Student Name", "Grade", "Purchased"]:
+    if parsedData[0] == ["Student #", "Student Name", "# Tickets"]:
         ...
-    elif parsedData[0] == ["Student #", "Student Name", "Grade", "Purchased", "Check In", "Check Out"]:
+    elif parsedData[0] == ["Student #", "Student Name", "# Tickets", "Check In", "Check Out"]:
         has_log = True
     else:
         flash("Invalid CSV", "danger")
@@ -186,27 +189,27 @@ def upload():
 
     for user in parsedData:
         if has_log:
-            for i in user[4].split(";"):
+            for i in user[3].split(";"):
                 if i:
                     time, info = parse_time(i, user[0], False)
                     checkInData[time] = info
-            for i in user[5].split(";"):
+            for i in user[4].split(";"):
                 if i:
                     time, info = parse_time(i, user[0], False)
                     checkOutData[time] = info
 
         print(user[1])
-        lName, fName = user[1].split("; ")
-        student = Student(checkInt(user[0]), checkString(lName), checkString(fName), checkInt(user[2]), False)
-
-        try:
-            db.session.add(student)
-            db.session.commit()
-        except:
+        fName, lName = user[1].split(" ")
+        student = Student(checkInt(user[0]), checkString(fName), checkString(lName), False)
+        guest = None
+        if checkInt(user[2]) > 1:
             student.has_guest = True
-            db.session.rollback()
-            db.session.add(Guest(checkInt(user[0]), checkString(fName), checkString(lName)))
-            db.session.commit()
+            guest = Guest(checkInt(user[0]), "G/O " + checkString(fName), checkString(lName))
+
+        db.session.add(student)
+        db.session.add(guest) if guest is not None else ...
+
+    db.session.commit()
 
     all_attendees = []
     for timeData, info in checkInData.items():
@@ -310,10 +313,12 @@ def activityLog():
     data = [
         [i.student.school_id, i.student.last_name, i.student.first_name,
          "Check In" if i.is_check_in else "Check Out",
-         i.time.strftime("%r"), i.staff.split("@")[0]] for i in student_log]
+         pytz.timezone("UTC").localize(i.time).astimezone(pytz.timezone("America/New_York")).strftime("%r"), i.staff.split("@")[0]] for i in
+        student_log]
     temp_data = [
         ["", i.guest.last_name, i.guest.first_name, "Check In" if i.is_check_in else "Check Out",
-         i.time.strftime("%r"), i.staff.split("@")[0]] for i in guest_log]
+         pytz.timezone("UTC").localize(i.time).astimezone(pytz.timezone("America/New_York")).strftime("%r"), i.staff.split("@")[0]] for i in guest_log]
+
 
     data.extend(temp_data)
     data.sort(key=lambda e: e[5], reverse=True)
